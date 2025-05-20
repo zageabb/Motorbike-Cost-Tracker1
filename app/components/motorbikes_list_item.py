@@ -39,14 +39,13 @@ def motorbikes_list_item(
                             class_name="text-sm font-bold text-red-600 mt-1",
                         ),
                         rx.cond(
-                            motorbike["selling_price"]
-                            != None,
+                            motorbike["sold_value"] != None,
                             rx.el.p(
-                                f"Selling Price: ${motorbike['selling_price']:.2f}",
+                                f"Sold Value: ${motorbike['sold_value']:.2f}",
                                 class_name="text-xs text-red-500",
                             ),
                             rx.el.p(
-                                "Selling Price: N/A",
+                                "Sold Value: N/A",
                                 class_name="text-xs text-red-400",
                             ),
                         ),

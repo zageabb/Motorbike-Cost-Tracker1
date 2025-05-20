@@ -55,16 +55,16 @@ def edit_motorbike_dialog() -> rx.Component:
                 MotorbikeState.edit_motorbike_form_is_sold,
                 rx.el.div(
                     rx.el.label(
-                        "Selling Price:",
-                        html_for="edit_motorbike_selling_price",
+                        "Sold Value:",
+                        html_for="edit_motorbike_sold_value",
                     ),
                     rx.el.input(
-                        id="edit_motorbike_selling_price",
+                        id="edit_motorbike_sold_value",
                         type="number",
                         step="0.01",
-                        placeholder="Enter selling price (optional)",
-                        default_value=MotorbikeState.edit_motorbike_form_selling_price,
-                        on_change=MotorbikeState.set_edit_motorbike_form_selling_price,
+                        placeholder="Enter sold value (optional)",
+                        default_value=MotorbikeState.edit_motorbike_form_sold_value,
+                        on_change=MotorbikeState.set_edit_motorbike_form_sold_value,
                         class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
                     ),
                     class_name="mb-4",

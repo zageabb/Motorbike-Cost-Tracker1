@@ -99,7 +99,7 @@ def motorbike_item_display(
         rx.cond(
             motorbike["is_sold"],
             rx.el.p(
-                f"Selling Price: ${motorbike['selling_price']:.2f}",
+                f"Sold Value: ${motorbike['sold_value']:.2f}",
                 class_name="text-sm text-green-600 font-semibold my-1",
             ),
             rx.fragment(),
@@ -107,7 +107,7 @@ def motorbike_item_display(
         rx.cond(
             motorbike["is_sold"],
             rx.el.p(
-                f"Profit: ${(motorbike['selling_price'] if motorbike['selling_price'] is not None else 0) - motorbike['total_motorbike_cost']:.2f}",
+                f"Profit: ${(motorbike['sold_value'] if motorbike['sold_value'] is not None else 0) - motorbike['total_motorbike_cost']:.2f}",
                 class_name="text-sm text-blue-600 font-semibold my-1",
             ),
             rx.fragment(),

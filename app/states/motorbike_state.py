@@ -20,7 +20,7 @@ class Motorbike(TypedDict):
     total_parts_cost: float
     total_motorbike_cost: float
     is_sold: bool
-    selling_price: float | None
+    sold_value: float | None
 
 
 class MotorbikeState(rx.State):
@@ -38,7 +38,7 @@ class MotorbikeState(rx.State):
     edit_motorbike_form_name: str = ""
     edit_motorbike_form_initial_cost: str = ""
     edit_motorbike_form_is_sold: bool = False
-    edit_motorbike_form_selling_price: str = ""
+    edit_motorbike_form_sold_value: str = ""
     show_edit_part_dialog: bool = False
     editing_part_motorbike_id: str | None = None
     editing_part_id: str | None = None
@@ -71,10 +71,10 @@ class MotorbikeState(rx.State):
         for bike in self.motorbikes:
             if (
                 bike["is_sold"]
-                and bike["selling_price"] is not None
+                and bike["sold_value"] is not None
             ):
                 profit += (
-                    bike["selling_price"]
+                    bike["sold_value"]
                     - bike["total_motorbike_cost"]
                 )
         return profit
@@ -161,7 +161,7 @@ class MotorbikeState(rx.State):
             "total_parts_cost": 0.0,
             "total_motorbike_cost": initial_cost,
             "is_sold": False,
-            "selling_price": None,
+            "sold_value": None,
         }
         self.motorbikes.append(new_motorbike)
         self.new_motorbike_name = ""
@@ -284,9 +284,9 @@ class MotorbikeState(rx.State):
                 self.edit_motorbike_form_is_sold = bike[
                     "is_sold"
                 ]
-                self.edit_motorbike_form_selling_price = (
-                    str(bike["selling_price"])
-                    if bike["selling_price"] is not None
+                self.edit_motorbike_form_sold_value = (
+                    str(bike["sold_value"])
+                    if bike["sold_value"] is not None
                     else ""
                 )
                 self.show_edit_motorbike_dialog = True
@@ -300,7 +300,7 @@ class MotorbikeState(rx.State):
     def set_edit_motorbike_form_is_sold(self, value: bool):
         self.edit_motorbike_form_is_sold = value
         if not value:
-            self.edit_motorbike_form_selling_price = ""
+            self.edit_motorbike_form_sold_value = ""
 
     @rx.event
     def save_edited_motorbike(self):
@@ -336,23 +336,21 @@ class MotorbikeState(rx.State):
                 duration=3000,
             )
         is_sold_val = self.edit_motorbike_form_is_sold
-        selling_price_val: float | None = None
+        sold_value_val: float | None = None
         if is_sold_val:
-            if (
-                self.edit_motorbike_form_selling_price.strip()
-            ):
+            if self.edit_motorbike_form_sold_value.strip():
                 try:
-                    selling_price_val = float(
-                        self.edit_motorbike_form_selling_price
+                    sold_value_val = float(
+                        self.edit_motorbike_form_sold_value
                     )
-                    if selling_price_val < 0:
+                    if sold_value_val < 0:
                         return rx.toast(
-                            "Selling price cannot be negative.",
+                            "Sold value cannot be negative.",
                             duration=3000,
                         )
                 except ValueError:
                     return rx.toast(
-                        "Invalid selling price format.",
+                        "Invalid sold value format.",
                         duration=3000,
                     )
         updated_motorbikes = []
@@ -363,9 +361,7 @@ class MotorbikeState(rx.State):
                 updated_bike["name"] = name
                 updated_bike["initial_cost"] = initial_cost
                 updated_bike["is_sold"] = is_sold_val
-                updated_bike["selling_price"] = (
-                    selling_price_val
-                )
+                updated_bike["sold_value"] = sold_value_val
                 updated_bike = (
                     self._recalculate_motorbike_costs(
                         updated_bike
@@ -395,7 +391,7 @@ class MotorbikeState(rx.State):
         self.edit_motorbike_form_name = ""
         self.edit_motorbike_form_initial_cost = ""
         self.edit_motorbike_form_is_sold = False
-        self.edit_motorbike_form_selling_price = ""
+        self.edit_motorbike_form_sold_value = ""
 
     @rx.event
     def delete_motorbike(self, motorbike_id: str):

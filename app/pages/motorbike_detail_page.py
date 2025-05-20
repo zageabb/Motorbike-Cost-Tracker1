@@ -95,7 +95,7 @@ def motorbike_detail_content() -> rx.Component:
                 "is_sold"
             ],
             rx.el.p(
-                f"Selling Price: ${MotorbikeState.selected_motorbike_for_detail['selling_price']:.2f}",
+                f"Sold Value: ${MotorbikeState.selected_motorbike_for_detail['sold_value']:.2f}",
                 class_name="text-green-600 font-semibold mb-1",
             ),
             rx.fragment(),
@@ -105,7 +105,7 @@ def motorbike_detail_content() -> rx.Component:
                 "is_sold"
             ],
             rx.el.p(
-                f"Profit: ${rx.cond(MotorbikeState.selected_motorbike_for_detail['selling_price'] != None, MotorbikeState.selected_motorbike_for_detail['selling_price'], 0) - MotorbikeState.selected_motorbike_for_detail['total_motorbike_cost']:.2f}",
+                f"Profit: ${rx.cond(MotorbikeState.selected_motorbike_for_detail['sold_value'] != None, MotorbikeState.selected_motorbike_for_detail['sold_value'], 0) - MotorbikeState.selected_motorbike_for_detail['total_motorbike_cost']:.2f}",
                 class_name="text-blue-600 font-semibold mb-4",
             ),
             rx.fragment(),
