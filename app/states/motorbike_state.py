@@ -106,6 +106,14 @@ class MotorbikeState(rx.State):
             key=lambda bike: bike["is_sold"],
         )
 
+    @rx.var
+    def unsold_motorbikes(self) -> List[Motorbike]:
+        return [
+            bike
+            for bike in self.motorbikes
+            if not bike["is_sold"]
+        ]
+
     def _recalculate_motorbike_costs(
         self, motorbike: Motorbike
     ) -> Motorbike:

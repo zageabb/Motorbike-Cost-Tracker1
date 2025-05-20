@@ -27,8 +27,8 @@ def part_form(
             MotorbikeState.part_form_selected_motorbike_id
             == ""
         )
-        | (MotorbikeState.motorbikes.length() == 0),
-        MotorbikeState.motorbikes.length() == 0,
+        | (MotorbikeState.unsold_motorbikes.length() == 0),
+        MotorbikeState.unsold_motorbikes.length() == 0,
     )
     return rx.el.form(
         rx.el.div(
@@ -55,10 +55,7 @@ def part_form(
                             disabled=True,
                         ),
                         rx.foreach(
-                            MotorbikeState.motorbikes.filter(
-                                lambda bike: bike["is_sold"]
-                                == False
-                            ),
+                            MotorbikeState.unsold_motorbikes,
                             lambda motorbike: rx.el.option(
                                 motorbike["name"],
                                 value=motorbike["id"],
@@ -69,17 +66,11 @@ def part_form(
                         value=MotorbikeState.part_form_selected_motorbike_id,
                         on_change=MotorbikeState.set_part_form_selected_motorbike_id,
                         class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
-                        disabled=MotorbikeState.motorbikes.filter(
-                            lambda bike: bike["is_sold"]
-                            == False
-                        ).length()
+                        disabled=MotorbikeState.unsold_motorbikes.length()
                         == 0,
                     ),
                     rx.cond(
-                        MotorbikeState.motorbikes.filter(
-                            lambda bike: bike["is_sold"]
-                            == False
-                        ).length()
+                        MotorbikeState.unsold_motorbikes.length()
                         == 0,
                         rx.el.p(
                             "All motorbikes are sold or no motorbikes available to add parts to.",
