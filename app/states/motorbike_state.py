@@ -273,6 +273,22 @@ class MotorbikeState(rx.State):
         self.new_part_buyer = buyer
 
     @rx.event
+    def set_edit_motorbike_form_name(self, value: str):
+        self.edit_motorbike_form_name = value
+
+    @rx.event
+    def set_edit_motorbike_form_initial_cost(
+        self, value: str
+    ):
+        self.edit_motorbike_form_initial_cost = value
+
+    @rx.event
+    def set_edit_motorbike_form_sold_value(
+        self, value: str
+    ):
+        self.edit_motorbike_form_sold_value = value
+
+    @rx.event
     def open_edit_motorbike_dialog(self, motorbike_id: str):
         for bike in self.motorbikes:
             if bike["id"] == motorbike_id:
