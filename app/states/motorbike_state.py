@@ -284,9 +284,9 @@ class MotorbikeState(rx.State):
 
     @rx.event
     def set_edit_motorbike_form_sold_value(
-        self, value: str
+        self, value: str | int | float
     ):
-        self.edit_motorbike_form_sold_value = value
+        self.edit_motorbike_form_sold_value = str(value)
 
     @rx.event
     def open_edit_motorbike_dialog(self, motorbike_id: str):
@@ -354,10 +354,13 @@ class MotorbikeState(rx.State):
         is_sold_val = self.edit_motorbike_form_is_sold
         sold_value_val: float | None = None
         if is_sold_val:
-            if self.edit_motorbike_form_sold_value.strip():
+            sold_value_input_str = str(
+                self.edit_motorbike_form_sold_value
+            )
+            if sold_value_input_str.strip():
                 try:
                     sold_value_val = float(
-                        self.edit_motorbike_form_sold_value
+                        sold_value_input_str.strip()
                     )
                     if sold_value_val < 0:
                         return rx.toast(
@@ -389,12 +392,12 @@ class MotorbikeState(rx.State):
                 updated_motorbikes.append(bike)
         if found:
             self.motorbikes = updated_motorbikes
-            self.close_edit_motorbike_dialog()
+            yield MotorbikeState.close_edit_motorbike_dialog
             return rx.toast(
-                "Motorbike updated successfully.",
-                duration=3000,
+                "Motorbike details updated.", duration=3000
             )
         else:
+            yield MotorbikeState.close_edit_motorbike_dialog
             return rx.toast(
                 "Failed to find motorbike to update.",
                 duration=3000,
@@ -422,11 +425,14 @@ class MotorbikeState(rx.State):
                 self.part_form_selected_motorbike_id
                 == motorbike_id
             ):
-                self.part_form_selected_motorbike_id = (
-                    self.motorbikes[0]["id"]
-                    if self.motorbikes
-                    else ""
-                )
+                if self.unsold_motorbikes:
+                    self.part_form_selected_motorbike_id = (
+                        self.unsold_motorbikes[0]["id"]
+                    )
+                else:
+                    self.part_form_selected_motorbike_id = (
+                        ""
+                    )
             return rx.toast(
                 "Motorbike deleted.", duration=3000
             )
@@ -443,29 +449,32 @@ class MotorbikeState(rx.State):
             if bike["id"] == motorbike_id:
                 if bike["is_sold"]:
                     return rx.toast(
-                        f"Cannot edit parts for '{bike['name']}' as it is already sold.",
+                        f"Cannot edit parts of '{bike['name']}' as it is sold.",
                         duration=4000,
                     )
-                for p in bike["parts"]:
-                    if p["id"] == part_id:
+                for part in bike["parts"]:
+                    if part["id"] == part_id:
                         self.editing_part_motorbike_id = (
                             motorbike_id
                         )
                         self.editing_part_id = part_id
-                        self.edit_part_form_name = p["name"]
-                        self.edit_part_form_source = p[
+                        self.edit_part_form_name = part[
+                            "name"
+                        ]
+                        self.edit_part_form_source = part[
                             "source"
                         ]
-                        self.edit_part_form_buyer = p[
+                        self.edit_part_form_buyer = part[
                             "buyer"
                         ]
                         self.edit_part_form_cost = str(
-                            p["cost"]
+                            part["cost"]
                         )
                         self.show_edit_part_dialog = True
                         return
         return rx.toast(
-            "Part not found for editing.", duration=3000
+            "Part or motorbike not found for editing.",
+            duration=3000,
         )
 
     @rx.event
@@ -478,20 +487,9 @@ class MotorbikeState(rx.State):
                 "No part selected for editing.",
                 duration=3000,
             )
-        for bike_check in self.motorbikes:
-            if (
-                bike_check["id"]
-                == self.editing_part_motorbike_id
-                and bike_check["is_sold"]
-            ):
-                self.close_edit_part_dialog()
-                return rx.toast(
-                    f"Cannot save part for '{bike_check['name']}' as it is already sold.",
-                    duration=4000,
-                )
-        part_name = self.edit_part_form_name.strip()
+        name = self.edit_part_form_name.strip()
         cost_str = self.edit_part_form_cost
-        if not part_name:
+        if not name:
             return rx.toast(
                 "Part name cannot be empty.", duration=3000
             )
@@ -511,54 +509,55 @@ class MotorbikeState(rx.State):
                 "Invalid part cost format.", duration=3000
             )
         updated_motorbikes_list = []
-        bike_found_and_updated = False
+        found_and_updated = False
         for bike_data in self.motorbikes:
             if (
                 bike_data["id"]
                 == self.editing_part_motorbike_id
             ):
                 current_bike_updated = bike_data.copy()
-                updated_parts_list = []
-                part_found_and_updated = False
-                for p_data in current_bike_updated["parts"]:
-                    if p_data["id"] == self.editing_part_id:
-                        updated_p = p_data.copy()
-                        updated_p["name"] = part_name
-                        updated_p["source"] = (
+                updated_parts = []
+                part_found_in_bike = False
+                for p in current_bike_updated["parts"]:
+                    if p["id"] == self.editing_part_id:
+                        updated_part = p.copy()
+                        updated_part["name"] = name
+                        updated_part["source"] = (
                             self.edit_part_form_source
                         )
-                        updated_p["buyer"] = (
+                        updated_part["buyer"] = (
                             self.edit_part_form_buyer
                         )
-                        updated_p["cost"] = cost
-                        updated_parts_list.append(updated_p)
-                        part_found_and_updated = True
+                        updated_part["cost"] = cost
+                        updated_parts.append(updated_part)
+                        part_found_in_bike = True
                     else:
-                        updated_parts_list.append(p_data)
-                if part_found_and_updated:
+                        updated_parts.append(p)
+                if part_found_in_bike:
                     current_bike_updated["parts"] = (
-                        updated_parts_list
+                        updated_parts
                     )
                     current_bike_updated = (
                         self._recalculate_motorbike_costs(
                             current_bike_updated
                         )
                     )
-                    bike_found_and_updated = True
+                    found_and_updated = True
                 updated_motorbikes_list.append(
                     current_bike_updated
                 )
             else:
                 updated_motorbikes_list.append(bike_data)
-        if bike_found_and_updated:
+        if found_and_updated:
             self.motorbikes = updated_motorbikes_list
-            self.close_edit_part_dialog()
+            yield MotorbikeState.close_edit_part_dialog
             return rx.toast(
-                "Part updated successfully.", duration=3000
+                "Part details updated.", duration=3000
             )
         else:
+            yield MotorbikeState.close_edit_part_dialog
             return rx.toast(
-                "Failed to find part or motorbike to update.",
+                "Failed to find or update part.",
                 duration=3000,
             )
 
@@ -622,5 +621,54 @@ class MotorbikeState(rx.State):
 
     @rx.event
     def do_nothing(self):
-        """A placeholder event handler that does nothing."""
         pass
+
+    @rx.event
+    def set_new_motorbike_name(self, value: str):
+        self.new_motorbike_name = value
+
+    @rx.event
+    def set_new_motorbike_initial_cost(self, value: str):
+        self.new_motorbike_initial_cost = value
+
+    @rx.event
+    def set_new_part_name(self, value: str):
+        self.new_part_name = value
+
+    @rx.event
+    def set_new_part_source(self, value: str):
+        self.new_part_source = value
+
+    @rx.event
+    def set_new_part_cost(self, value: str):
+        self.new_part_cost = value
+
+    @rx.event
+    def set_edit_part_form_name(self, value: str):
+        self.edit_part_form_name = value
+
+    @rx.event
+    def set_edit_part_form_source(self, value: str):
+        self.edit_part_form_source = value
+
+    @rx.event
+    def set_edit_part_form_buyer(self, value: str):
+        self.edit_part_form_buyer = value
+
+    @rx.event
+    def set_edit_part_form_cost(
+        self, value: str | int | float
+    ):
+        self.edit_part_form_cost = str(value)
+
+    @rx.event
+    def set_show_edit_motorbike_dialog(self, value: bool):
+        self.show_edit_motorbike_dialog = value
+        if not value:
+            yield MotorbikeState.close_edit_motorbike_dialog
+
+    @rx.event
+    def set_show_edit_part_dialog(self, value: bool):
+        self.show_edit_part_dialog = value
+        if not value:
+            yield MotorbikeState.close_edit_part_dialog
