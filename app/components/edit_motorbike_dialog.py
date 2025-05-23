@@ -72,6 +72,21 @@ def edit_motorbike_dialog() -> rx.Component:
                 rx.fragment(),
             ),
             rx.el.div(
+                rx.el.label(
+                    rx.el.input(
+                        type="checkbox",
+                        checked=MotorbikeState.edit_motorbike_form_ignore_from_calculations,
+                        on_change=MotorbikeState.set_edit_motorbike_form_ignore_from_calculations,
+                        class_name="mr-2 leading-tight",
+                    ),
+                    rx.el.span(
+                        "Ignore from Dashboard Calculations"
+                    ),
+                    class_name="flex items-center text-sm font-medium text-gray-700",
+                ),
+                class_name="mb-4",
+            ),
+            rx.el.div(
                 rx.el.button(
                     "Cancel",
                     on_click=MotorbikeState.close_edit_motorbike_dialog,

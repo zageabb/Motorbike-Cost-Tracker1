@@ -28,6 +28,7 @@ class Motorbike(TypedDict):
     total_motorbike_cost: float
     is_sold: bool
     sold_value: float | None
+    ignore_from_calculations: bool
 
 
 class MotorbikeState(rx.State):
@@ -46,6 +47,9 @@ class MotorbikeState(rx.State):
     edit_motorbike_form_initial_cost: str = ""
     edit_motorbike_form_is_sold: bool = False
     edit_motorbike_form_sold_value: str = ""
+    edit_motorbike_form_ignore_from_calculations: bool = (
+        False
+    )
     show_edit_part_dialog: bool = False
     editing_part_motorbike_id: str | None = None
     editing_part_id: str | None = None
@@ -85,6 +89,7 @@ class MotorbikeState(rx.State):
             + total_parts_cost,
             "is_sold": bike_db.is_sold,
             "sold_value": bike_db.sold_value,
+            "ignore_from_calculations": bike_db.ignore_from_calculations,
         }
         return motorbike_dict
 
@@ -94,6 +99,7 @@ class MotorbikeState(rx.State):
             (
                 bike["total_motorbike_cost"]
                 for bike in self.motorbikes
+                if not bike["ignore_from_calculations"]
             )
         )
 
@@ -104,6 +110,7 @@ class MotorbikeState(rx.State):
                 bike["total_motorbike_cost"]
                 for bike in self.motorbikes
                 if not bike["is_sold"]
+                and (not bike["ignore_from_calculations"])
             )
         )
         return cost_of_unsold_bikes * 2
@@ -115,6 +122,7 @@ class MotorbikeState(rx.State):
             if (
                 bike["is_sold"]
                 and bike["sold_value"] is not None
+                and (not bike["ignore_from_calculations"])
             ):
                 profit += (
                     bike["sold_value"]
@@ -228,6 +236,7 @@ class MotorbikeState(rx.State):
             initial_cost=initial_cost,
             is_sold=False,
             sold_value=None,
+            ignore_from_calculations=False,
         )
         try:
             with rx.session() as session:
@@ -379,6 +388,14 @@ class MotorbikeState(rx.State):
         self.edit_motorbike_form_sold_value = str(value)
 
     @rx.event
+    def set_edit_motorbike_form_ignore_from_calculations(
+        self, value: bool
+    ):
+        self.edit_motorbike_form_ignore_from_calculations = (
+            value
+        )
+
+    @rx.event
     def open_edit_motorbike_dialog(self, motorbike_id: str):
         for bike in self.motorbikes:
             if bike["id"] == motorbike_id:
@@ -395,6 +412,9 @@ class MotorbikeState(rx.State):
                     if bike["sold_value"] is not None
                     else ""
                 )
+                self.edit_motorbike_form_ignore_from_calculations = bike[
+                    "ignore_from_calculations"
+                ]
                 self.show_edit_motorbike_dialog = True
                 return
         return rx.toast(
@@ -476,6 +496,9 @@ class MotorbikeState(rx.State):
             bike_db.initial_cost = initial_cost
             bike_db.is_sold = is_sold_val
             bike_db.sold_value = sold_value_val
+            bike_db.ignore_from_calculations = (
+                self.edit_motorbike_form_ignore_from_calculations
+            )
             session.add(bike_db)
             session.commit()
             session.refresh(bike_db)
@@ -506,6 +529,9 @@ class MotorbikeState(rx.State):
         self.edit_motorbike_form_initial_cost = ""
         self.edit_motorbike_form_is_sold = False
         self.edit_motorbike_form_sold_value = ""
+        self.edit_motorbike_form_ignore_from_calculations = (
+            False
+        )
 
     @rx.event
     def delete_motorbike(self, motorbike_id: str):

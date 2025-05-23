@@ -36,6 +36,7 @@ class MotorbikeDB(rx.Model, table=True):
     initial_cost: float
     is_sold: bool = Field(default=False)
     sold_value: Optional[float] = Field(default=None)
+    ignore_from_calculations: bool = Field(default=False)
     parts: PyList["PartDB"] = Relationship(
         back_populates="motorbike",
         sa_relationship_kwargs={

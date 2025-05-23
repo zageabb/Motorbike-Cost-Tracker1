@@ -74,6 +74,17 @@ def motorbike_detail_content() -> rx.Component:
                     ),
                     rx.fragment(),
                 ),
+                rx.cond(
+                    MotorbikeState.selected_motorbike_for_detail[
+                        "ignore_from_calculations"
+                    ],
+                    rx.el.span(
+                        "IGNORED IN CALCS",
+                        class_name="ml-4 px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-semibold rounded-full",
+                    ),
+                    rx.fragment(),
+                ),
+                class_name="flex items-center",
             ),
             rx.el.button(
                 "Edit Motorbike Details",

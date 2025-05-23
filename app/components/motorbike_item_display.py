@@ -73,6 +73,15 @@ def motorbike_item_display(
                     ),
                     rx.fragment(),
                 ),
+                rx.cond(
+                    motorbike["ignore_from_calculations"],
+                    rx.el.span(
+                        "IGNORED IN CALCS",
+                        class_name="ml-3 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full",
+                    ),
+                    rx.fragment(),
+                ),
+                class_name="flex items-center",
             ),
             rx.el.div(
                 rx.el.button(
