@@ -5,6 +5,10 @@ from app.pages.motorbike_detail_page import (
     motorbike_detail_page,
 )
 from app.states.motorbike_state import MotorbikeState
+from app.db_setup import (
+    create_db_and_tables,
+    populate_example_data,
+)
 
 
 def app_with_theme():
@@ -12,6 +16,8 @@ def app_with_theme():
 
 
 app = app_with_theme()
+create_db_and_tables()
+populate_example_data()
 app.add_page(index, route="/")
 app.add_page(motorbikes_page, route="/motorbikes")
 app.add_page(
