@@ -229,24 +229,37 @@ class MotorbikeState(rx.State):
             is_sold=False,
             sold_value=None,
         )
-        with rx.session() as session:
-            session.add(motorbike_db)
-            session.commit()
-            session.refresh(motorbike_db)
-        new_motorbike_dict = (
-            self._convert_motorbike_db_to_dict(motorbike_db)
-        )
-        self.motorbikes.append(new_motorbike_dict)
-        self.motorbikes = list(self.motorbikes)
-        self.new_motorbike_name = ""
-        self.new_motorbike_initial_cost = ""
-        if len(self.motorbikes) == 1 and (
-            not self.part_form_selected_motorbike_id
-        ):
-            self.part_form_selected_motorbike_id = new_id
-        return rx.toast(
-            f"Motorbike '{name}' added.", duration=3000
-        )
+        try:
+            with rx.session() as session:
+                session.add(motorbike_db)
+                session.commit()
+                session.refresh(motorbike_db)
+            new_motorbike_dict = (
+                self._convert_motorbike_db_to_dict(
+                    motorbike_db
+                )
+            )
+            self.motorbikes.append(new_motorbike_dict)
+            self.motorbikes = list(self.motorbikes)
+            self.new_motorbike_name = ""
+            self.new_motorbike_initial_cost = ""
+            if len(self.motorbikes) == 1 and (
+                not self.part_form_selected_motorbike_id
+            ):
+                self.part_form_selected_motorbike_id = (
+                    new_id
+                )
+            return rx.toast(
+                f"Motorbike '{name}' added.", duration=3000
+            )
+        except Exception as e:
+            print(
+                f"Error processing motorbike '{name}' (ID: {new_id}) after DB commit: {type(e).__name__}: {e}"
+            )
+            return rx.toast(
+                f"Motorbike '{name}' saved to DB, but a post-processing error occurred: {str(e)[:100]}. App state might be inconsistent.",
+                duration=5000,
+            )
 
     @rx.event
     def add_part(
