@@ -23,9 +23,12 @@ def part_form(
     )
     button_disabled_cond = rx.cond(
         show_dropdown_cond,
-        MotorbikeState.part_form_selected_motorbike_id
-        == "",
-        False,
+        (
+            MotorbikeState.part_form_selected_motorbike_id
+            == ""
+        )
+        | (MotorbikeState.unsold_motorbikes.length() == 0),
+        MotorbikeState.unsold_motorbikes.length() == 0,
     )
     return rx.el.form(
         rx.el.div(
@@ -33,7 +36,7 @@ def part_form(
                 rx.cond(
                     is_specific_mode_active,
                     specific_header_content,
-                    "Add New Part (General)",
+                    "Add New Part",
                 ),
                 class_name="text-lg font-medium leading-6 text-gray-900 mb-4",
             ),
@@ -52,7 +55,7 @@ def part_form(
                             disabled=True,
                         ),
                         rx.foreach(
-                            MotorbikeState.motorbikes_list,
+                            MotorbikeState.unsold_motorbikes,
                             lambda motorbike: rx.el.option(
                                 motorbike["name"],
                                 value=motorbike["id"],
@@ -63,12 +66,21 @@ def part_form(
                         value=MotorbikeState.part_form_selected_motorbike_id,
                         on_change=MotorbikeState.set_part_form_selected_motorbike_id,
                         class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
-                        disabled=MotorbikeState.motorbikes_list.length()
+                        disabled=MotorbikeState.unsold_motorbikes.length()
                         == 0,
+                    ),
+                    rx.cond(
+                        MotorbikeState.unsold_motorbikes.length()
+                        == 0,
+                        rx.el.p(
+                            "All motorbikes are sold or no motorbikes available to add parts to.",
+                            class_name="text-xs text-orange-600 mt-1",
+                        ),
+                        rx.fragment(),
                     ),
                     class_name="mb-4",
                 ),
-                None,
+                rx.fragment(),
             ),
             rx.el.div(
                 rx.el.label(
@@ -144,7 +156,7 @@ def part_form(
             rx.el.button(
                 "Add Part",
                 type="submit",
-                class_name="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+                class_name="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50",
                 disabled=button_disabled_cond,
             ),
             class_name="p-6 bg-gray-50 rounded-lg shadow",

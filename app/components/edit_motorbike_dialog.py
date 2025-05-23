@@ -39,6 +39,39 @@ def edit_motorbike_dialog() -> rx.Component:
                 class_name="mb-4",
             ),
             rx.el.div(
+                rx.el.label(
+                    rx.el.input(
+                        type="checkbox",
+                        checked=MotorbikeState.edit_motorbike_form_is_sold,
+                        on_change=MotorbikeState.set_edit_motorbike_form_is_sold,
+                        class_name="mr-2 leading-tight",
+                    ),
+                    rx.el.span("Mark as Sold"),
+                    class_name="flex items-center text-sm font-medium text-gray-700",
+                ),
+                class_name="mb-4",
+            ),
+            rx.cond(
+                MotorbikeState.edit_motorbike_form_is_sold,
+                rx.el.div(
+                    rx.el.label(
+                        "Sold Value:",
+                        html_for="edit_motorbike_sold_value",
+                    ),
+                    rx.el.input(
+                        id="edit_motorbike_sold_value",
+                        type="number",
+                        step="0.01",
+                        placeholder="Enter sold value (optional)",
+                        default_value=MotorbikeState.edit_motorbike_form_sold_value,
+                        on_change=MotorbikeState.set_edit_motorbike_form_sold_value,
+                        class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+                    ),
+                    class_name="mb-4",
+                ),
+                rx.fragment(),
+            ),
+            rx.el.div(
                 rx.el.button(
                     "Cancel",
                     on_click=MotorbikeState.close_edit_motorbike_dialog,

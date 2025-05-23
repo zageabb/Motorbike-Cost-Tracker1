@@ -24,7 +24,7 @@ def motorbikes_page() -> rx.Component:
                 class_name="text-indigo-600 hover:text-indigo-800 mb-6 block",
             ),
             rx.cond(
-                MotorbikeState.motorbikes_list.length()
+                MotorbikeState.sorted_motorbikes_for_display.length()
                 == 0,
                 rx.el.p(
                     "No motorbikes added yet. Go to the dashboard to add one.",
@@ -32,7 +32,7 @@ def motorbikes_page() -> rx.Component:
                 ),
                 rx.el.div(
                     rx.foreach(
-                        MotorbikeState.motorbikes_list,
+                        MotorbikeState.sorted_motorbikes_for_display,
                         motorbikes_list_item,
                     ),
                     class_name="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
@@ -40,5 +40,5 @@ def motorbikes_page() -> rx.Component:
             ),
         ),
         class_name="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen bg-gray-100 py-8",
-        on_mount=MotorbikeState.load_motorbikes_from_db,
+        on_mount=MotorbikeState.load_all_data,
     )

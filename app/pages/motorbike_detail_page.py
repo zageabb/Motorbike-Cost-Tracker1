@@ -34,6 +34,9 @@ def render_detail_part_row(
                     motorbike_id, part["id"]
                 ),
                 class_name="text-indigo-600 hover:text-indigo-900 text-xs px-2 py-1 border border-indigo-300 rounded",
+                disabled=MotorbikeState.selected_motorbike_for_detail[
+                    "is_sold"
+                ],
             ),
             rx.el.button(
                 "Delete",
@@ -41,6 +44,9 @@ def render_detail_part_row(
                     motorbike_id, part["id"]
                 ),
                 class_name="text-red-600 hover:text-red-900 ml-2 text-xs px-2 py-1 border border-red-300 rounded",
+                disabled=MotorbikeState.selected_motorbike_for_detail[
+                    "is_sold"
+                ],
             ),
             class_name="px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
         ),
@@ -58,25 +64,65 @@ def motorbike_detail_content() -> rx.Component:
                     ],
                     class_name="text-2xl font-bold text-gray-800",
                 ),
-                rx.el.button(
-                    "Edit Motorbike Details",
-                    on_click=lambda: MotorbikeState.open_edit_motorbike_dialog(
-                        MotorbikeState.selected_motorbike_for_detail[
-                            "id"
-                        ]
+                rx.cond(
+                    MotorbikeState.selected_motorbike_for_detail[
+                        "is_sold"
+                    ],
+                    rx.el.span(
+                        "SOLD",
+                        class_name="ml-4 px-3 py-1 bg-red-100 text-red-700 text-sm font-semibold rounded-full",
                     ),
-                    class_name="ml-4 text-sm text-indigo-600 hover:text-indigo-800 px-3 py-1 border border-indigo-300 rounded",
+                    rx.fragment(),
                 ),
+            ),
+            rx.el.button(
+                "Edit Motorbike Details",
+                on_click=lambda: MotorbikeState.open_edit_motorbike_dialog(
+                    MotorbikeState.selected_motorbike_for_detail[
+                        "id"
+                    ]
+                ),
+                class_name="ml-auto text-sm text-indigo-600 hover:text-indigo-800 px-3 py-1 border border-indigo-300 rounded",
             ),
             class_name="flex items-center justify-between mb-2",
         ),
         rx.el.p(
             f"Initial Cost: ${MotorbikeState.selected_motorbike_for_detail['initial_cost']:.2f}",
-            class_name="text-gray-600 mb-4",
+            class_name="text-gray-600 mb-1",
+        ),
+        rx.cond(
+            MotorbikeState.selected_motorbike_for_detail[
+                "is_sold"
+            ],
+            rx.el.p(
+                f"Sold Value: ${MotorbikeState.selected_motorbike_for_detail['sold_value']:.2f}",
+                class_name="text-green-600 font-semibold mb-1",
+            ),
+            rx.fragment(),
+        ),
+        rx.cond(
+            MotorbikeState.selected_motorbike_for_detail[
+                "is_sold"
+            ],
+            rx.el.p(
+                f"Profit: ${rx.cond(MotorbikeState.selected_motorbike_for_detail['sold_value'] != None, MotorbikeState.selected_motorbike_for_detail['sold_value'], 0) - MotorbikeState.selected_motorbike_for_detail['total_motorbike_cost']:.2f}",
+                class_name="text-blue-600 font-semibold mb-4",
+            ),
+            rx.fragment(),
         ),
         rx.el.h3(
             "Parts",
             class_name="text-xl font-semibold text-gray-700 mt-6 mb-3",
+        ),
+        rx.cond(
+            MotorbikeState.selected_motorbike_for_detail[
+                "is_sold"
+            ],
+            rx.el.p(
+                "Parts list is final as this motorbike has been sold.",
+                class_name="text-sm text-orange-600 bg-orange-100 p-2 rounded-md mb-3",
+            ),
+            rx.fragment(),
         ),
         rx.el.table(
             rx.el.thead(
@@ -152,16 +198,22 @@ def motorbike_detail_content() -> rx.Component:
             ),
             class_name="mt-4",
         ),
-        rx.el.div(
-            part_form(
-                fixed_motorbike_id=MotorbikeState.selected_motorbike_for_detail[
-                    "id"
-                ],
-                motorbike_name=MotorbikeState.selected_motorbike_for_detail[
-                    "name"
-                ],
+        rx.cond(
+            MotorbikeState.selected_motorbike_for_detail[
+                "is_sold"
+            ],
+            rx.fragment(),
+            rx.el.div(
+                part_form(
+                    fixed_motorbike_id=MotorbikeState.selected_motorbike_for_detail[
+                        "id"
+                    ],
+                    motorbike_name=MotorbikeState.selected_motorbike_for_detail[
+                        "name"
+                    ],
+                ),
+                class_name="mt-8",
             ),
-            class_name="mt-8",
         ),
     )
 
@@ -193,11 +245,11 @@ def motorbike_detail_page() -> rx.Component:
                 != None,
                 motorbike_detail_content(),
                 rx.el.p(
-                    "Motorbike not found or ID not specified. Refreshing data...",
-                    class_name="text-red-500",
+                    "Loading motorbike details or motorbike not found...",
+                    class_name="text-gray-500",
                 ),
             ),
         ),
         class_name="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen bg-gray-100 py-8",
-        on_mount=MotorbikeState.load_motorbikes_from_db,
+        on_mount=MotorbikeState.load_all_data,
     )

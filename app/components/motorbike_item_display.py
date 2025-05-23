@@ -11,7 +11,9 @@ from app.components.edit_part_dialog import edit_part_dialog
 
 
 def render_part_row(
-    motorbike_id: rx.Var[str], part: rx.Var[Part]
+    motorbike_id: rx.Var[str],
+    part: rx.Var[Part],
+    is_motorbike_sold: rx.Var[bool],
 ) -> rx.Component:
     return rx.el.tr(
         rx.el.td(
@@ -37,6 +39,7 @@ def render_part_row(
                     motorbike_id, part["id"]
                 ),
                 class_name="text-indigo-600 hover:text-indigo-900 text-xs px-2 py-1 border border-indigo-300 rounded",
+                disabled=is_motorbike_sold,
             ),
             rx.el.button(
                 "Delete",
@@ -44,6 +47,7 @@ def render_part_row(
                     motorbike_id, part["id"]
                 ),
                 class_name="text-red-600 hover:text-red-900 ml-2 text-xs px-2 py-1 border border-red-300 rounded",
+                disabled=is_motorbike_sold,
             ),
             class_name="px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
         ),
@@ -56,9 +60,19 @@ def motorbike_item_display(
 ) -> rx.Component:
     return rx.el.div(
         rx.el.div(
-            rx.el.h3(
-                motorbike["name"],
-                class_name="text-xl font-semibold text-gray-800",
+            rx.el.div(
+                rx.el.h3(
+                    motorbike["name"],
+                    class_name="text-xl font-semibold text-gray-800",
+                ),
+                rx.cond(
+                    motorbike["is_sold"],
+                    rx.el.span(
+                        "SOLD",
+                        class_name="ml-3 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full",
+                    ),
+                    rx.fragment(),
+                ),
             ),
             rx.el.div(
                 rx.el.button(
@@ -80,12 +94,36 @@ def motorbike_item_display(
         ),
         rx.el.p(
             f"Initial Cost: ${motorbike['initial_cost']:.2f}",
-            class_name="text-sm text-gray-600 my-3",
+            class_name="text-sm text-gray-600 my-1",
+        ),
+        rx.cond(
+            motorbike["is_sold"],
+            rx.el.p(
+                f"Sold Value: ${motorbike['sold_value']:.2f}",
+                class_name="text-sm text-green-600 font-semibold my-1",
+            ),
+            rx.fragment(),
+        ),
+        rx.cond(
+            motorbike["is_sold"],
+            rx.el.p(
+                f"Profit: ${(motorbike['sold_value'] if motorbike['sold_value'] is not None else 0) - motorbike['total_motorbike_cost']:.2f}",
+                class_name="text-sm text-blue-600 font-semibold my-1",
+            ),
+            rx.fragment(),
         ),
         rx.el.div(
             rx.el.h4(
                 "Parts",
-                class_name="text-md font-medium text-gray-700 mb-2",
+                class_name="text-md font-medium text-gray-700 mt-3 mb-2",
+            ),
+            rx.cond(
+                motorbike["is_sold"],
+                rx.el.p(
+                    "Parts list is final as this motorbike has been sold.",
+                    class_name="text-xs text-orange-600 bg-orange-100 p-1 rounded-md mb-2",
+                ),
+                rx.fragment(),
             ),
             rx.el.table(
                 rx.el.thead(
@@ -121,7 +159,9 @@ def motorbike_item_display(
                     rx.foreach(
                         motorbike["parts"],
                         lambda part: render_part_row(
-                            motorbike["id"], part
+                            motorbike["id"],
+                            part,
+                            motorbike["is_sold"],
                         ),
                     ),
                     rx.cond(
@@ -161,27 +201,4 @@ def motorbike_item_display(
             class_name="mt-4",
         ),
         class_name="mb-8 p-4 bg-white rounded-lg shadow-md",
-    )
-
-
-def motorbikes_display() -> rx.Component:
-    return rx.el.div(
-        edit_motorbike_dialog(),
-        edit_part_dialog(),
-        rx.el.h2(
-            "Motorbikes and Parts",
-            class_name="text-2xl font-bold text-gray-900 mb-6",
-        ),
-        rx.cond(
-            MotorbikeState.motorbikes.length() == 0,
-            rx.el.p(
-                "No motorbikes added yet. Add one using the form above or navigate to 'All Motorbikes' to manage them.",
-                class_name="text-gray-600 text-center py-4",
-            ),
-            rx.foreach(
-                MotorbikeState.motorbikes,
-                motorbike_item_display,
-            ),
-        ),
-        class_name="mt-8",
     )
