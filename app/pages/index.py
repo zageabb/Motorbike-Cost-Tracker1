@@ -1,5 +1,6 @@
 import reflex as rx
 from app.states.motorbike_state import MotorbikeState
+from app.states.auth_state import AuthState
 from app.components.motorbike_form import motorbike_form
 from app.components.part_form import part_form
 from app.components.motorbikes_display import (
@@ -11,9 +12,17 @@ from app.components.summary_display import summary_display
 def index() -> rx.Component:
     return rx.el.div(
         rx.el.div(
-            rx.el.h1(
-                "Motorbike Cost Tracker",
-                class_name="text-4xl font-bold text-center text-gray-800 mb-2",
+            rx.el.div(
+                rx.el.h1(
+                    "Motorbike Cost Tracker",
+                    class_name="text-4xl font-bold text-center text-gray-800 mb-2",
+                ),
+                rx.el.button(
+                    "Sign Out",
+                    on_click=AuthState.sign_out,
+                    class_name="absolute top-4 right-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                ),
+                class_name="relative",
             ),
             rx.el.div(
                 rx.link(
@@ -37,6 +46,9 @@ def index() -> rx.Component:
             rx.el.div(motorbikes_display()),
             class_name="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8",
         ),
-        class_name="min-h-screen bg-gray-100 py-8",
-        on_mount=MotorbikeState.load_all_data,
+        class_name="min-h-screen bg-gray-100 py-8 font-sans",
+        on_mount=[
+            MotorbikeState.load_all_data,
+            AuthState.check_session,
+        ],
     )

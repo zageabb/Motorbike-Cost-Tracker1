@@ -1,5 +1,6 @@
 import reflex as rx
 from app.states.motorbike_state import MotorbikeState, Part
+from app.states.auth_state import AuthState
 from app.components.part_form import part_form
 from app.components.edit_motorbike_dialog import (
     edit_motorbike_dialog,
@@ -234,9 +235,17 @@ def motorbike_detail_page() -> rx.Component:
         edit_motorbike_dialog(),
         edit_part_dialog(),
         rx.el.div(
-            rx.el.h1(
-                "Motorbike Details",
-                class_name="text-3xl font-bold text-gray-800 mb-6",
+            rx.el.div(
+                rx.el.h1(
+                    "Motorbike Details",
+                    class_name="text-3xl font-bold text-gray-800 mb-6",
+                ),
+                rx.el.button(
+                    "Sign Out",
+                    on_click=AuthState.sign_out,
+                    class_name="absolute top-4 right-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                ),
+                class_name="relative",
             ),
             rx.el.div(
                 rx.link(
@@ -261,6 +270,9 @@ def motorbike_detail_page() -> rx.Component:
                 ),
             ),
         ),
-        class_name="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen bg-gray-100 py-8",
-        on_mount=MotorbikeState.load_all_data,
+        class_name="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen bg-gray-100 py-8 font-sans",
+        on_mount=[
+            MotorbikeState.load_all_data,
+            AuthState.check_session,
+        ],
     )
