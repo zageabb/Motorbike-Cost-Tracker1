@@ -71,7 +71,7 @@ def motorbike_detail_content() -> rx.Component:
                     ],
                     rx.el.span(
                         "SOLD",
-                        class_name="ml-4 px-3 py-1 bg-red-100 text-red-700 text-sm font-semibold rounded-full",
+                        class_name="ml-4 px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full",
                     ),
                     rx.fragment(),
                 ),

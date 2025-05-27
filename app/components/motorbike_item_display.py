@@ -69,7 +69,7 @@ def motorbike_item_display(
                     motorbike["is_sold"],
                     rx.el.span(
                         "SOLD",
-                        class_name="ml-3 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full",
+                        class_name="ml-3 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full",
                     ),
                     rx.fragment(),
                 ),

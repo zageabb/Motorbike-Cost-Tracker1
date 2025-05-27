@@ -6,7 +6,7 @@ def motorbikes_list_item(
     motorbike: Motorbike,
 ) -> rx.Component:
     base_classes = "p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-    sold_classes = "bg-red-50 text-red-700 border-red-300 hover:shadow-lg"
+    sold_classes = "bg-green-50 text-green-700 border-green-300 hover:shadow-lg"
     unsold_classes = "bg-white"
     return rx.el.div(
         rx.link(
@@ -16,7 +16,7 @@ def motorbikes_list_item(
                         motorbike["name"],
                         class_name=rx.cond(
                             motorbike["is_sold"],
-                            "text-lg font-semibold text-red-700 hover:text-red-900",
+                            "text-lg font-semibold text-green-700 hover:text-green-900",
                             "text-lg font-semibold text-indigo-700 hover:text-indigo-900",
                         ),
                     ),
@@ -24,7 +24,7 @@ def motorbikes_list_item(
                         motorbike["is_sold"],
                         rx.el.span(
                             "SOLD",
-                            class_name="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs font-semibold rounded-full",
+                            class_name="ml-2 px-2 py-0.5 bg-green-100 text-green-600 text-xs font-semibold rounded-full",
                         ),
                         rx.fragment(),
                     ),
@@ -59,11 +59,11 @@ def motorbikes_list_item(
                             motorbike["sold_value"] != None,
                             rx.el.p(
                                 f"Sold Value: ${motorbike['sold_value']:.2f}",
-                                class_name="text-xs text-red-500 mt-1",
+                                class_name="text-xs text-green-500 mt-1",
                             ),
                             rx.el.p(
                                 "Sold Value: N/A",
-                                class_name="text-xs text-red-400 mt-1",
+                                class_name="text-xs text-green-400 mt-1",
                             ),
                         )
                     ),
