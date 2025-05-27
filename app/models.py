@@ -8,6 +8,17 @@ def generate_uuid_str() -> str:
     return str(uuid.uuid4())
 
 
+class UserDB(rx.Model, table=True):
+    __tablename__ = "userdb"
+    id: str = Field(
+        default_factory=generate_uuid_str,
+        primary_key=True,
+        index=True,
+    )
+    email: str = Field(unique=True, index=True)
+    password_hash: str
+
+
 class PartDB(rx.Model, table=True):
     __tablename__ = "partdb"
     id: str = Field(
