@@ -298,11 +298,13 @@ class MotorbikeState(rx.State):
             )
         try:
             cost = float(cost_str)
-            #if cost < 0:
+            if cost < 0:
             #    return rx.toast(
+                rx.toast(
             #        "Part cost cannot be negative.",
-            #        duration=3000,
-            #    )
+                    "Part cost is negative, possible error",
+                    duration=3000,
+                )
         except ValueError:
             return rx.toast(
                 "Invalid part cost format.", duration=3000
