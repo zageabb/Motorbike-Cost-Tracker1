@@ -1,5 +1,6 @@
 import reflex as rx
-from app.pages.index import index
+from app.pages.landing_page import landing_page
+from app.pages.dashboard_page import dashboard_page
 from app.pages.motorbikes_page import motorbikes_page
 from app.pages.motorbike_detail_page import (
     motorbike_detail_page,
@@ -24,7 +25,12 @@ app = app_with_theme()
 create_db_and_tables()
 populate_example_data()
 app.add_page(
-    index, route="/", on_load=AuthState.check_session
+    landing_page, route="/", on_load=AuthState.check_session
+)
+app.add_page(
+    dashboard_page,
+    route="/dashboard",
+    on_load=AuthState.check_session,
 )
 app.add_page(
     motorbikes_page,

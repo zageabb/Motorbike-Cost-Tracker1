@@ -86,8 +86,13 @@ def analytics_page() -> rx.Component:
             ),
             rx.el.div(
                 rx.link(
-                    "Back to Dashboard",
+                    "Back to Landing Page",
                     href="/",
+                    class_name="text-blue-600 hover:text-blue-800 mr-4",
+                ),
+                rx.link(
+                    "Back to Dashboard",
+                    href="/dashboard",
                     class_name="text-indigo-600 hover:text-indigo-800 mr-4",
                 ),
                 rx.link(

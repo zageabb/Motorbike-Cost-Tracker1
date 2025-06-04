@@ -27,17 +27,25 @@ def motorbikes_page() -> rx.Component:
                 ),
                 class_name="relative",
             ),
-            rx.link(
-                "Back to Dashboard",
-                href="/",
-                class_name="text-indigo-600 hover:text-indigo-800 mb-6 block",
+            rx.el.div(
+                rx.link(
+                    "Back to Landing Page",
+                    href="/",
+                    class_name="text-blue-600 hover:text-blue-800 mr-4",
+                ),
+                rx.link(
+                    "Back to Dashboard",
+                    href="/dashboard",
+                    class_name="text-indigo-600 hover:text-indigo-800",
+                ),
+                class_name="mb-6",
             ),
             rx.cond(
                 MotorbikeState.sorted_motorbikes_for_display.length()
                 == 0,
                 rx.el.p(
-                    "No motorbikes added yet. Go to the dashboard to add one.",
-                    class_name="text-gray-600",
+                    "No motorbikes have been added yet. Go to the dashboard to add one.",
+                    class_name="text-gray-600 text-center py-10",
                 ),
                 rx.el.div(
                     rx.foreach(
