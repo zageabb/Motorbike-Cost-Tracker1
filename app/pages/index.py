@@ -28,8 +28,13 @@ def index() -> rx.Component:
                 rx.link(
                     "View All Motorbikes",
                     href="/motorbikes",
-                    class_name="text-center block text-indigo-600 hover:text-indigo-800 mb-8",
-                )
+                    class_name="text-center block text-indigo-600 hover:text-indigo-800 mb-2",
+                ),
+                rx.link(
+                    "View Analytics",
+                    href="/analytics",
+                    class_name="text-center block text-green-600 hover:text-green-800 mb-8",
+                ),
             ),
             rx.el.div(
                 rx.el.div(

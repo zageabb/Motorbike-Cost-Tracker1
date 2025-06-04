@@ -299,9 +299,7 @@ class MotorbikeState(rx.State):
         try:
             cost = float(cost_str)
             if cost < 0:
-            #    return rx.toast(
                 rx.toast(
-            #        "Part cost cannot be negative.",
                     "Part cost is negative, possible error",
                     duration=3000,
                 )
