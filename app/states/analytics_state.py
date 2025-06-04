@@ -20,6 +20,11 @@ class BikeAnalytics(TypedDict):
 
 
 class AnalyticsState(rx.State):
+    filter_sold_status: str = "all"
+
+    @rx.event
+    def set_filter_sold_status(self, status: str):
+        self.filter_sold_status = status
 
     @rx.var
     async def bike_analytics_data(
@@ -27,7 +32,22 @@ class AnalyticsState(rx.State):
     ) -> List[BikeAnalytics]:
         motorbike_s = await self.get_state(MotorbikeState)
         analytics: List[BikeAnalytics] = []
-        for bike in motorbike_s.motorbikes:
+        filtered_bikes: List[Motorbike] = []
+        for bike_data in motorbike_s.motorbikes:
+            if self.filter_sold_status == "all":
+                filtered_bikes.append(bike_data)
+            elif (
+                self.filter_sold_status == "sold"
+                and bike_data["is_sold"]
+            ):
+                filtered_bikes.append(bike_data)
+            elif self.filter_sold_status == "unsold" and (
+                not bike_data["is_sold"]
+            ):
+                filtered_bikes.append(bike_data)
+        for bike in filtered_bikes:
+            if bike["ignore_from_calculations"]:
+                continue
             tanya_cost = 0.0
             gerald_cost = 0.0
             for part in bike["parts"]:
@@ -64,23 +84,6 @@ class AnalyticsState(rx.State):
                 }
             )
         return analytics
-
-    @rx.var
-    def total_tanya_investment(self) -> float:
-        total = 0.0
-        return 0.0
-
-    @rx.var
-    def total_gerald_investment(self) -> float:
-        return 0.0
-
-    @rx.var
-    def total_tanya_profit_share(self) -> float:
-        return 0.0
-
-    @rx.var
-    def total_gerald_profit_share(self) -> float:
-        return 0.0
 
     @rx.var
     async def overall_summary(self) -> Dict[str, float]:

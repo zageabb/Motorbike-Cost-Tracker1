@@ -102,6 +102,28 @@ def analytics_page() -> rx.Component:
                 class_name="text-2xl font-semibold text-gray-700 mb-4",
             ),
             rx.el.div(
+                rx.el.label(
+                    "Filter by Sold Status:",
+                    class_name="mr-2 font-medium text-gray-700",
+                ),
+                rx.el.select(
+                    rx.el.option(
+                        "Show All Bikes", value="all"
+                    ),
+                    rx.el.option(
+                        "Show Sold Bikes Only", value="sold"
+                    ),
+                    rx.el.option(
+                        "Show Unsold Bikes Only",
+                        value="unsold",
+                    ),
+                    value=AnalyticsState.filter_sold_status,
+                    on_change=AnalyticsState.set_filter_sold_status,
+                    class_name="mb-6 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+                ),
+                class_name="mb-6 flex items-center",
+            ),
+            rx.el.div(
                 rx.el.div(
                     rx.el.p(
                         "Total Tanya's Investment:",
@@ -200,7 +222,7 @@ def analytics_page() -> rx.Component:
                             == 0,
                             rx.el.tr(
                                 rx.el.td(
-                                    "No motorbike data available for analytics.",
+                                    "No motorbike data available for the selected filter.",
                                     col_span=8,
                                     class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center",
                                 )
@@ -216,6 +238,7 @@ def analytics_page() -> rx.Component:
         class_name="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen bg-gray-100 py-8 font-sans",
         on_mount=[
             MotorbikeState.load_all_data,
+            AnalyticsState.set_filter_sold_status("all"),
             AuthState.check_session,
         ],
     )
