@@ -16,6 +16,10 @@ def render_analytics_row(
             class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-900",
         ),
         rx.el.td(
+            f"${bike_data['initial_cost']:.2f}",
+            class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right",
+        ),
+        rx.el.td(
             f"${bike_data['total_cost']:.2f}",
             class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right",
         ),
@@ -188,6 +192,10 @@ def analytics_page() -> rx.Component:
                                 class_name="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                             ),
                             rx.el.th(
+                                "Initial Cost",
+                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                            ),
+                            rx.el.th(
                                 "Total Cost",
                                 class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
                             ),
@@ -228,7 +236,7 @@ def analytics_page() -> rx.Component:
                             rx.el.tr(
                                 rx.el.td(
                                     "No motorbike data available for the selected filter.",
-                                    col_span=8,
+                                    col_span=9,
                                     class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center",
                                 )
                             ),

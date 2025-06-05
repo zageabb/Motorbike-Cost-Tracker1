@@ -10,6 +10,7 @@ from app.states.motorbike_state import (
 class BikeAnalytics(TypedDict):
     id: str
     name: str
+    initial_cost: float
     total_cost: float
     tanya_cost: float
     gerald_cost: float
@@ -72,6 +73,7 @@ class AnalyticsState(rx.State):
                 {
                     "id": bike["id"],
                     "name": bike["name"],
+                    "initial_cost": bike["initial_cost"],
                     "total_cost": bike[
                         "total_motorbike_cost"
                     ],

@@ -25,6 +25,8 @@ class Motorbike(TypedDict):
     initial_cost: float
     parts: List[Part]
     total_parts_cost: float
+    tanya_parts_cost: float
+    gerald_parts_cost: float
     total_motorbike_cost: float
     is_sold: bool
     sold_value: float | None
@@ -79,12 +81,28 @@ class MotorbikeState(rx.State):
         total_parts_cost = sum(
             (p["cost"] for p in parts_list)
         )
+        tanya_parts_cost = sum(
+            (
+                p["cost"]
+                for p in parts_list
+                if p["buyer"].lower() == "tanya"
+            )
+        )
+        gerald_parts_cost = sum(
+            (
+                p["cost"]
+                for p in parts_list
+                if p["buyer"].lower() == "gerald"
+            )
+        )
         motorbike_dict: Motorbike = {
             "id": bike_db.id,
             "name": bike_db.name,
             "initial_cost": bike_db.initial_cost,
             "parts": parts_list,
             "total_parts_cost": total_parts_cost,
+            "tanya_parts_cost": tanya_parts_cost,
+            "gerald_parts_cost": gerald_parts_cost,
             "total_motorbike_cost": bike_db.initial_cost
             + total_parts_cost,
             "is_sold": bike_db.is_sold,
@@ -173,6 +191,20 @@ class MotorbikeState(rx.State):
     ) -> Motorbike:
         motorbike["total_parts_cost"] = sum(
             (p["cost"] for p in motorbike["parts"])
+        )
+        motorbike["tanya_parts_cost"] = sum(
+            (
+                p["cost"]
+                for p in motorbike["parts"]
+                if p["buyer"].lower() == "tanya"
+            )
+        )
+        motorbike["gerald_parts_cost"] = sum(
+            (
+                p["cost"]
+                for p in motorbike["parts"]
+                if p["buyer"].lower() == "gerald"
+            )
         )
         motorbike["total_motorbike_cost"] = (
             motorbike["initial_cost"]

@@ -201,6 +201,22 @@ def motorbike_detail_content() -> rx.Component:
                 class_name="text-md font-medium text-gray-700 mt-4 text-right",
             ),
             rx.el.p(
+                "Tanya's Parts Cost: ",
+                rx.el.span(
+                    f"${MotorbikeState.selected_motorbike_for_detail['tanya_parts_cost']:.2f}",
+                    class_name="font-semibold text-blue-600",
+                ),
+                class_name="text-sm font-medium text-gray-700 mt-1 text-right",
+            ),
+            rx.el.p(
+                "Gerald's Parts Cost: ",
+                rx.el.span(
+                    f"${MotorbikeState.selected_motorbike_for_detail['gerald_parts_cost']:.2f}",
+                    class_name="font-semibold text-green-600",
+                ),
+                class_name="text-sm font-medium text-gray-700 mt-1 text-right",
+            ),
+            rx.el.p(
                 "Total Motorbike Cost: ",
                 rx.el.span(
                     f"${MotorbikeState.selected_motorbike_for_detail['total_motorbike_cost']:.2f}",
