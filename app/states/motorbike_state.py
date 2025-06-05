@@ -23,6 +23,7 @@ class Motorbike(TypedDict):
     id: str
     name: str
     initial_cost: float
+    bike_buyer: str | None
     parts: List[Part]
     total_parts_cost: float
     tanya_parts_cost: float
@@ -38,6 +39,7 @@ class MotorbikeState(rx.State):
     buyers: List[str] = ["Tanya", "Gerald"]
     new_motorbike_name: str = ""
     new_motorbike_initial_cost: str = ""
+    new_motorbike_buyer: str = "Tanya"
     part_form_selected_motorbike_id: str = ""
     new_part_name: str = ""
     new_part_source: str = ""
@@ -47,6 +49,7 @@ class MotorbikeState(rx.State):
     editing_motorbike_id: str | None = None
     edit_motorbike_form_name: str = ""
     edit_motorbike_form_initial_cost: str = ""
+    edit_motorbike_form_buyer: str = "Tanya"
     edit_motorbike_form_is_sold: bool = False
     edit_motorbike_form_sold_value: str = ""
     edit_motorbike_form_ignore_from_calculations: bool = (
@@ -99,6 +102,7 @@ class MotorbikeState(rx.State):
             "id": bike_db.id,
             "name": bike_db.name,
             "initial_cost": bike_db.initial_cost,
+            "bike_buyer": bike_db.buyer,
             "parts": parts_list,
             "total_parts_cost": total_parts_cost,
             "tanya_parts_cost": tanya_parts_cost,
@@ -186,32 +190,6 @@ class MotorbikeState(rx.State):
             if not bike["is_sold"]
         ]
 
-    def _recalculate_motorbike_costs(
-        self, motorbike: Motorbike
-    ) -> Motorbike:
-        motorbike["total_parts_cost"] = sum(
-            (p["cost"] for p in motorbike["parts"])
-        )
-        motorbike["tanya_parts_cost"] = sum(
-            (
-                p["cost"]
-                for p in motorbike["parts"]
-                if p["buyer"].lower() == "tanya"
-            )
-        )
-        motorbike["gerald_parts_cost"] = sum(
-            (
-                p["cost"]
-                for p in motorbike["parts"]
-                if p["buyer"].lower() == "gerald"
-            )
-        )
-        motorbike["total_motorbike_cost"] = (
-            motorbike["initial_cost"]
-            + motorbike["total_parts_cost"]
-        )
-        return motorbike
-
     @rx.event
     def load_all_data(self):
         temp_motorbikes = []
@@ -239,6 +217,7 @@ class MotorbikeState(rx.State):
     def add_motorbike(self, form_data: dict):
         name = form_data.get("name", "").strip()
         initial_cost_str = form_data.get("initial_cost", "")
+        buyer = form_data.get("buyer", self.buyers[0])
         if not name:
             return rx.toast(
                 "Motorbike name cannot be empty.",
@@ -266,6 +245,7 @@ class MotorbikeState(rx.State):
             id=new_id,
             name=name,
             initial_cost=initial_cost,
+            buyer=buyer,
             is_sold=False,
             sold_value=None,
             ignore_from_calculations=False,
@@ -284,6 +264,7 @@ class MotorbikeState(rx.State):
             self.motorbikes = list(self.motorbikes)
             self.new_motorbike_name = ""
             self.new_motorbike_initial_cost = ""
+            self.new_motorbike_buyer = self.buyers[0]
             if len(self.motorbikes) == 1 and (
                 not self.part_form_selected_motorbike_id
             ):
@@ -368,6 +349,9 @@ class MotorbikeState(rx.State):
             session.add(part_db)
             session.commit()
             session.refresh(bike_db)
+            updated_bike_dict = (
+                self._convert_motorbike_db_to_dict(bike_db)
+            )
             for i, bike_in_list in enumerate(
                 self.motorbikes
             ):
@@ -375,11 +359,7 @@ class MotorbikeState(rx.State):
                     bike_in_list["id"]
                     == motorbike_id_to_use
                 ):
-                    self.motorbikes[i] = (
-                        self._convert_motorbike_db_to_dict(
-                            bike_db
-                        )
-                    )
+                    self.motorbikes[i] = updated_bike_dict
                     break
             self.motorbikes = list(self.motorbikes)
         self.new_part_name = ""
@@ -402,6 +382,14 @@ class MotorbikeState(rx.State):
     @rx.event
     def set_new_part_buyer(self, buyer: str):
         self.new_part_buyer = buyer
+
+    @rx.event
+    def set_new_motorbike_buyer(self, buyer: str):
+        self.new_motorbike_buyer = buyer
+
+    @rx.event
+    def set_edit_motorbike_form_buyer(self, buyer: str):
+        self.edit_motorbike_form_buyer = buyer
 
     @rx.event
     def set_edit_motorbike_form_name(self, value: str):
@@ -435,6 +423,11 @@ class MotorbikeState(rx.State):
                 self.edit_motorbike_form_name = bike["name"]
                 self.edit_motorbike_form_initial_cost = str(
                     bike["initial_cost"]
+                )
+                self.edit_motorbike_form_buyer = (
+                    bike["bike_buyer"]
+                    if bike["bike_buyer"]
+                    else self.buyers[0]
                 )
                 self.edit_motorbike_form_is_sold = bike[
                     "is_sold"
@@ -471,6 +464,7 @@ class MotorbikeState(rx.State):
         initial_cost_str = (
             self.edit_motorbike_form_initial_cost
         )
+        buyer = self.edit_motorbike_form_buyer
         if not name:
             return rx.toast(
                 "Motorbike name cannot be empty.",
@@ -526,6 +520,7 @@ class MotorbikeState(rx.State):
                 )
             bike_db.name = name
             bike_db.initial_cost = initial_cost
+            bike_db.buyer = buyer
             bike_db.is_sold = is_sold_val
             bike_db.sold_value = sold_value_val
             bike_db.ignore_from_calculations = (
@@ -534,6 +529,9 @@ class MotorbikeState(rx.State):
             session.add(bike_db)
             session.commit()
             session.refresh(bike_db)
+            updated_bike_dict = (
+                self._convert_motorbike_db_to_dict(bike_db)
+            )
             for i, bike_in_list in enumerate(
                 self.motorbikes
             ):
@@ -541,11 +539,7 @@ class MotorbikeState(rx.State):
                     bike_in_list["id"]
                     == self.editing_motorbike_id
                 ):
-                    self.motorbikes[i] = (
-                        self._convert_motorbike_db_to_dict(
-                            bike_db
-                        )
-                    )
+                    self.motorbikes[i] = updated_bike_dict
                     break
             self.motorbikes = list(self.motorbikes)
         yield MotorbikeState.close_edit_motorbike_dialog
@@ -559,6 +553,7 @@ class MotorbikeState(rx.State):
         self.editing_motorbike_id = None
         self.edit_motorbike_form_name = ""
         self.edit_motorbike_form_initial_cost = ""
+        self.edit_motorbike_form_buyer = self.buyers[0]
         self.edit_motorbike_form_is_sold = False
         self.edit_motorbike_form_sold_value = ""
         self.edit_motorbike_form_ignore_from_calculations = (
@@ -701,6 +696,11 @@ class MotorbikeState(rx.State):
             session.add(part_db)
             session.commit()
             session.refresh(motorbike_db)
+            updated_bike_dict = (
+                self._convert_motorbike_db_to_dict(
+                    motorbike_db
+                )
+            )
             for i, bike_in_list in enumerate(
                 self.motorbikes
             ):
@@ -708,11 +708,7 @@ class MotorbikeState(rx.State):
                     bike_in_list["id"]
                     == self.editing_part_motorbike_id
                 ):
-                    self.motorbikes[i] = (
-                        self._convert_motorbike_db_to_dict(
-                            motorbike_db
-                        )
-                    )
+                    self.motorbikes[i] = updated_bike_dict
                     break
             self.motorbikes = list(self.motorbikes)
         yield MotorbikeState.close_edit_part_dialog
@@ -737,7 +733,6 @@ class MotorbikeState(rx.State):
         toast_message = (
             "Part or motorbike not found for deletion."
         )
-        part_deleted_from_db = False
         with rx.session() as session:
             motorbike_db_check = session.get(
                 MotorbikeDB, motorbike_id
@@ -757,13 +752,17 @@ class MotorbikeState(rx.State):
             ):
                 session.delete(part_db)
                 session.commit()
-                part_deleted_from_db = True
                 toast_message = "Part deleted."
                 motorbike_db_to_refresh = session.get(
                     MotorbikeDB, motorbike_id
                 )
                 if motorbike_db_to_refresh:
                     session.refresh(motorbike_db_to_refresh)
+                    updated_bike_dict = (
+                        self._convert_motorbike_db_to_dict(
+                            motorbike_db_to_refresh
+                        )
+                    )
                     for i, bike_in_list in enumerate(
                         self.motorbikes
                     ):
@@ -772,9 +771,7 @@ class MotorbikeState(rx.State):
                             == motorbike_id
                         ):
                             self.motorbikes[i] = (
-                                self._convert_motorbike_db_to_dict(
-                                    motorbike_db_to_refresh
-                                )
+                                updated_bike_dict
                             )
                             break
                     self.motorbikes = list(self.motorbikes)

@@ -20,15 +20,23 @@ def render_analytics_row(
             class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right",
         ),
         rx.el.td(
+            rx.cond(
+                bike_data["bike_buyer"] != None,
+                bike_data["bike_buyer"],
+                "N/A",
+            ),
+            class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center",
+        ),
+        rx.el.td(
             f"${bike_data['total_cost']:.2f}",
             class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right",
         ),
         rx.el.td(
-            f"${bike_data['tanya_cost']:.2f}",
+            f"${bike_data['tanya_investment_on_bike']:.2f}",
             class_name="px-6 py-4 whitespace-nowrap text-sm text-blue-500 text-right",
         ),
         rx.el.td(
-            f"${bike_data['gerald_cost']:.2f}",
+            f"${bike_data['gerald_investment_on_bike']:.2f}",
             class_name="px-6 py-4 whitespace-nowrap text-sm text-green-500 text-right",
         ),
         rx.el.td(
@@ -196,15 +204,19 @@ def analytics_page() -> rx.Component:
                                 class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
                             ),
                             rx.el.th(
-                                "Total Cost",
+                                "Bike Buyer",
+                                class_name="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider",
+                            ),
+                            rx.el.th(
+                                "Total Cost (Bike + Parts)",
                                 class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
                             ),
                             rx.el.th(
-                                "Tanya's Cost (Parts)",
+                                "Tanya's Inv. (Bike + Parts)",
                                 class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
                             ),
                             rx.el.th(
-                                "Gerald's Cost (Parts)",
+                                "Gerald's Inv. (Bike + Parts)",
                                 class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
                             ),
                             rx.el.th(
@@ -236,7 +248,7 @@ def analytics_page() -> rx.Component:
                             rx.el.tr(
                                 rx.el.td(
                                     "No motorbike data available for the selected filter.",
-                                    col_span=9,
+                                    col_span=10,
                                     class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center",
                                 )
                             ),

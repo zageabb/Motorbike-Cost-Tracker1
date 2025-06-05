@@ -104,6 +104,23 @@ def motorbike_detail_content() -> rx.Component:
         ),
         rx.cond(
             MotorbikeState.selected_motorbike_for_detail[
+                "bike_buyer"
+            ]
+            != None,
+            rx.el.p(
+                "Bought by: ",
+                rx.el.span(
+                    MotorbikeState.selected_motorbike_for_detail[
+                        "bike_buyer"
+                    ],
+                    class_name="font-semibold",
+                ),
+                class_name="text-gray-600 mb-1",
+            ),
+            rx.fragment(),
+        ),
+        rx.cond(
+            MotorbikeState.selected_motorbike_for_detail[
                 "is_sold"
             ],
             rx.el.p(

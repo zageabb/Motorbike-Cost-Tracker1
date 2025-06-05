@@ -1,6 +1,10 @@
 import reflex as rx
 import uuid
-from typing import List as PyList, TYPE_CHECKING, Optional
+from typing import (
+    List as PyList,
+    TYPE_CHECKING,
+    Optional as PyOptional,
+)
 from sqlmodel import Field, Relationship
 
 
@@ -45,8 +49,9 @@ class MotorbikeDB(rx.Model, table=True):
     )
     name: str
     initial_cost: float
+    buyer: PyOptional[str] = Field(default=None)
     is_sold: bool = Field(default=False)
-    sold_value: Optional[float] = Field(default=None)
+    sold_value: PyOptional[float] = Field(default=None)
     ignore_from_calculations: bool = Field(default=False)
     parts: PyList["PartDB"] = Relationship(
         back_populates="motorbike",

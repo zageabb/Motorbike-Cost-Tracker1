@@ -40,6 +40,25 @@ def edit_motorbike_dialog() -> rx.Component:
             ),
             rx.el.div(
                 rx.el.label(
+                    "Bought By:",
+                    html_for="edit_motorbike_buyer",
+                ),
+                rx.el.select(
+                    rx.foreach(
+                        MotorbikeState.buyers,
+                        lambda buyer: rx.el.option(
+                            buyer, value=buyer
+                        ),
+                    ),
+                    id="edit_motorbike_buyer",
+                    value=MotorbikeState.edit_motorbike_form_buyer,
+                    on_change=MotorbikeState.set_edit_motorbike_form_buyer,
+                    class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+                ),
+                class_name="mb-4",
+            ),
+            rx.el.div(
+                rx.el.label(
                     rx.el.input(
                         type="checkbox",
                         checked=MotorbikeState.edit_motorbike_form_is_sold,

@@ -19,7 +19,6 @@ def motorbike_form() -> rx.Component:
                 id="motorbike_name",
                 placeholder="Enter motorbike name (e.g., Honda CB500)",
                 default_value=MotorbikeState.new_motorbike_name,
-                key=MotorbikeState.new_motorbike_name,
                 class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
             ),
             class_name="mb-4",
@@ -37,7 +36,27 @@ def motorbike_form() -> rx.Component:
                 placeholder="Enter initial cost (e.g., 1500.00)",
                 step="0.01",
                 default_value=MotorbikeState.new_motorbike_initial_cost,
-                key=MotorbikeState.new_motorbike_initial_cost,
+                class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+            ),
+            class_name="mb-4",
+        ),
+        rx.el.div(
+            rx.el.label(
+                "Bought By:",
+                html_for="motorbike_buyer",
+                class_name="block text-sm font-medium text-gray-700",
+            ),
+            rx.el.select(
+                rx.foreach(
+                    MotorbikeState.buyers,
+                    lambda buyer: rx.el.option(
+                        buyer, value=buyer
+                    ),
+                ),
+                name="buyer",
+                id="motorbike_buyer",
+                value=MotorbikeState.new_motorbike_buyer,
+                on_change=MotorbikeState.set_new_motorbike_buyer,
                 class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
             ),
             class_name="mb-4",

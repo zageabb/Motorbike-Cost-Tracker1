@@ -11,9 +11,10 @@ class BikeAnalytics(TypedDict):
     id: str
     name: str
     initial_cost: float
+    bike_buyer: str | None
     total_cost: float
-    tanya_cost: float
-    gerald_cost: float
+    tanya_investment_on_bike: float
+    gerald_investment_on_bike: float
     profit: float | None
     tanya_profit_share: float | None
     gerald_profit_share: float | None
@@ -49,13 +50,26 @@ class AnalyticsState(rx.State):
         for bike in filtered_bikes:
             if bike["ignore_from_calculations"]:
                 continue
-            tanya_cost = 0.0
-            gerald_cost = 0.0
-            for part in bike["parts"]:
-                if part["buyer"].lower() == "tanya":
-                    tanya_cost += part["cost"]
-                elif part["buyer"].lower() == "gerald":
-                    gerald_cost += part["cost"]
+            tanya_total_investment_on_bike = bike[
+                "tanya_parts_cost"
+            ]
+            gerald_total_investment_on_bike = bike[
+                "gerald_parts_cost"
+            ]
+            if (
+                bike["bike_buyer"]
+                and bike["bike_buyer"].lower() == "tanya"
+            ):
+                tanya_total_investment_on_bike += bike[
+                    "initial_cost"
+                ]
+            elif (
+                bike["bike_buyer"]
+                and bike["bike_buyer"].lower() == "gerald"
+            ):
+                gerald_total_investment_on_bike += bike[
+                    "initial_cost"
+                ]
             profit = None
             tanya_profit_share = None
             gerald_profit_share = None
@@ -74,11 +88,12 @@ class AnalyticsState(rx.State):
                     "id": bike["id"],
                     "name": bike["name"],
                     "initial_cost": bike["initial_cost"],
+                    "bike_buyer": bike["bike_buyer"],
                     "total_cost": bike[
                         "total_motorbike_cost"
                     ],
-                    "tanya_cost": tanya_cost,
-                    "gerald_cost": gerald_cost,
+                    "tanya_investment_on_bike": tanya_total_investment_on_bike,
+                    "gerald_investment_on_bike": gerald_total_investment_on_bike,
                     "profit": profit,
                     "tanya_profit_share": tanya_profit_share,
                     "gerald_profit_share": gerald_profit_share,
@@ -91,10 +106,10 @@ class AnalyticsState(rx.State):
     async def overall_summary(self) -> Dict[str, float]:
         data = await self.bike_analytics_data
         total_tanya_inv = sum(
-            (b["tanya_cost"] for b in data)
+            (b["tanya_investment_on_bike"] for b in data)
         )
         total_gerald_inv = sum(
-            (b["gerald_cost"] for b in data)
+            (b["gerald_investment_on_bike"] for b in data)
         )
         total_tanya_profit = sum(
             (
