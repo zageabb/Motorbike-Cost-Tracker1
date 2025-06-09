@@ -40,6 +40,36 @@ def edit_motorbike_dialog() -> rx.Component:
             ),
             rx.el.div(
                 rx.el.label(
+                    "Tanya's Share:",
+                    html_for="edit_motorbike_tanya_initial_cost",
+                ),
+                rx.el.input(
+                    id="edit_motorbike_tanya_initial_cost",
+                    type="number",
+                    step="0.01",
+                    default_value=MotorbikeState.edit_motorbike_form_tanya_initial_cost,
+                    on_change=MotorbikeState.set_edit_motorbike_form_tanya_initial_cost,
+                    class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+                ),
+                class_name="mb-4",
+            ),
+            rx.el.div(
+                rx.el.label(
+                    "Gerald's Share:",
+                    html_for="edit_motorbike_gerald_initial_cost",
+                ),
+                rx.el.input(
+                    id="edit_motorbike_gerald_initial_cost",
+                    type="number",
+                    step="0.01",
+                    default_value=MotorbikeState.edit_motorbike_form_gerald_initial_cost,
+                    on_change=MotorbikeState.set_edit_motorbike_form_gerald_initial_cost,
+                    class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+                ),
+                class_name="mb-4",
+            ),
+            rx.el.div(
+                rx.el.label(
                     "Bought By:",
                     html_for="edit_motorbike_buyer",
                 ),

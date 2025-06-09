@@ -42,6 +42,40 @@ def motorbike_form() -> rx.Component:
         ),
         rx.el.div(
             rx.el.label(
+                "Tanya's Share:",
+                html_for="motorbike_tanya_initial_cost",
+                class_name="block text-sm font-medium text-gray-700",
+            ),
+            rx.el.input(
+                name="tanya_initial_cost",
+                id="motorbike_tanya_initial_cost",
+                type="number",
+                step="0.01",
+                default_value=MotorbikeState.new_motorbike_tanya_initial_cost,
+                on_change=MotorbikeState.set_new_motorbike_tanya_initial_cost,
+                class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+            ),
+            class_name="mb-4",
+        ),
+        rx.el.div(
+            rx.el.label(
+                "Gerald's Share:",
+                html_for="motorbike_gerald_initial_cost",
+                class_name="block text-sm font-medium text-gray-700",
+            ),
+            rx.el.input(
+                name="gerald_initial_cost",
+                id="motorbike_gerald_initial_cost",
+                type="number",
+                step="0.01",
+                default_value=MotorbikeState.new_motorbike_gerald_initial_cost,
+                on_change=MotorbikeState.set_new_motorbike_gerald_initial_cost,
+                class_name="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+            ),
+            class_name="mb-4",
+        ),
+        rx.el.div(
+            rx.el.label(
                 "Bought By:",
                 html_for="motorbike_buyer",
                 class_name="block text-sm font-medium text-gray-700",
