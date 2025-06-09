@@ -37,16 +37,16 @@ def populate_example_data():
             )
         existing_bike_check = (
             session.query(MotorbikeDB)
-            .filter(MotorbikeDB.name == "Honda CB750")
+            .filter(MotorbikeDB.name == "NT 700 Deauville - PJ57VCC")
             .first()
         )
         if existing_bike_check:
             print(
-                "Example motorbike data (Honda CB750) already exists. Skipping population."
+                "Example motorbike data (NT 700 Deauville - PJ57VCC) already exists. Skipping population."
             )
         else:
             bike1 = MotorbikeDB(
-                name="Honda CB750",
+                name="NT 700 Deauville - PJ57VCC",
                 initial_cost=2500.0,
                 tanya_initial_cost=1250.0,
                 gerald_initial_cost=1250.0,
@@ -66,7 +66,7 @@ def populate_example_data():
                 motorbike=bike1,
             )
             bike2 = MotorbikeDB(
-                name="Yamaha XS650",
+                name="Triumph Tiger 800",
                 initial_cost=1800.0,
                 tanya_initial_cost=900.0,
                 gerald_initial_cost=900.0,
