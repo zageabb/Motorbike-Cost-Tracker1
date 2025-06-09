@@ -50,26 +50,12 @@ class AnalyticsState(rx.State):
         for bike in filtered_bikes:
             if bike["ignore_from_calculations"]:
                 continue
-            tanya_total_investment_on_bike = bike[
-                "tanya_parts_cost"
-            ]
-            gerald_total_investment_on_bike = bike[
-                "gerald_parts_cost"
-            ]
-            if (
-                bike["bike_buyer"]
-                and bike["bike_buyer"].lower() == "tanya"
-            ):
-                tanya_total_investment_on_bike += bike[
-                    "initial_cost"
-                ]
-            elif (
-                bike["bike_buyer"]
-                and bike["bike_buyer"].lower() == "gerald"
-            ):
-                gerald_total_investment_on_bike += bike[
-                    "initial_cost"
-                ]
+            tanya_total_investment_on_bike = (
+                bike["tanya_parts_cost"] + bike["tanya_initial_cost"]
+            )
+            gerald_total_investment_on_bike = (
+                bike["gerald_parts_cost"] + bike["gerald_initial_cost"]
+            )
             profit = None
             tanya_profit_share = None
             gerald_profit_share = None

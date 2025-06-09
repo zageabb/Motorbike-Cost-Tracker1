@@ -23,6 +23,8 @@ class Motorbike(TypedDict):
     id: str
     name: str
     initial_cost: float
+    tanya_initial_cost: float
+    gerald_initial_cost: float
     bike_buyer: str | None
     parts: List[Part]
     total_parts_cost: float
@@ -39,6 +41,8 @@ class MotorbikeState(rx.State):
     buyers: List[str] = ["Tanya", "Gerald"]
     new_motorbike_name: str = ""
     new_motorbike_initial_cost: str = ""
+    new_motorbike_tanya_initial_cost: str = ""
+    new_motorbike_gerald_initial_cost: str = ""
     new_motorbike_buyer: str = "Tanya"
     part_form_selected_motorbike_id: str = ""
     new_part_name: str = ""
@@ -49,6 +53,8 @@ class MotorbikeState(rx.State):
     editing_motorbike_id: str | None = None
     edit_motorbike_form_name: str = ""
     edit_motorbike_form_initial_cost: str = ""
+    edit_motorbike_form_tanya_initial_cost: str = ""
+    edit_motorbike_form_gerald_initial_cost: str = ""
     edit_motorbike_form_buyer: str = "Tanya"
     edit_motorbike_form_is_sold: bool = False
     edit_motorbike_form_sold_value: str = ""
@@ -102,6 +108,8 @@ class MotorbikeState(rx.State):
             "id": bike_db.id,
             "name": bike_db.name,
             "initial_cost": bike_db.initial_cost,
+            "tanya_initial_cost": bike_db.tanya_initial_cost,
+            "gerald_initial_cost": bike_db.gerald_initial_cost,
             "bike_buyer": bike_db.buyer,
             "parts": parts_list,
             "total_parts_cost": total_parts_cost,
@@ -217,6 +225,8 @@ class MotorbikeState(rx.State):
     def add_motorbike(self, form_data: dict):
         name = form_data.get("name", "").strip()
         initial_cost_str = form_data.get("initial_cost", "")
+        tanya_initial_str = form_data.get("tanya_initial_cost", "")
+        gerald_initial_str = form_data.get("gerald_initial_cost", "")
         buyer = form_data.get("buyer", self.buyers[0])
         if not name:
             return rx.toast(
@@ -230,9 +240,11 @@ class MotorbikeState(rx.State):
             )
         try:
             initial_cost = float(initial_cost_str)
-            if initial_cost < 0:
+            tanya_initial = float(tanya_initial_str or 0)
+            gerald_initial = float(gerald_initial_str or 0)
+            if initial_cost < 0 or tanya_initial < 0 or gerald_initial < 0:
                 return rx.toast(
-                    "Initial cost cannot be negative.",
+                    "Initial costs cannot be negative.",
                     duration=3000,
                 )
         except ValueError:
@@ -240,11 +252,15 @@ class MotorbikeState(rx.State):
                 "Invalid initial cost format.",
                 duration=3000,
             )
+        if abs((tanya_initial + gerald_initial) - initial_cost) > 0.01:
+            initial_cost = tanya_initial + gerald_initial
         new_id = str(uuid.uuid4())
         motorbike_db = MotorbikeDB(
             id=new_id,
             name=name,
             initial_cost=initial_cost,
+            tanya_initial_cost=tanya_initial,
+            gerald_initial_cost=gerald_initial,
             buyer=buyer,
             is_sold=False,
             sold_value=None,
@@ -264,6 +280,8 @@ class MotorbikeState(rx.State):
             self.motorbikes = list(self.motorbikes)
             self.new_motorbike_name = ""
             self.new_motorbike_initial_cost = ""
+            self.new_motorbike_tanya_initial_cost = ""
+            self.new_motorbike_gerald_initial_cost = ""
             self.new_motorbike_buyer = self.buyers[0]
             if len(self.motorbikes) == 1 and (
                 not self.part_form_selected_motorbike_id
@@ -402,6 +420,18 @@ class MotorbikeState(rx.State):
         self.edit_motorbike_form_initial_cost = value
 
     @rx.event
+    def set_edit_motorbike_form_tanya_initial_cost(
+        self, value: str
+    ):
+        self.edit_motorbike_form_tanya_initial_cost = value
+
+    @rx.event
+    def set_edit_motorbike_form_gerald_initial_cost(
+        self, value: str
+    ):
+        self.edit_motorbike_form_gerald_initial_cost = value
+
+    @rx.event
     def set_edit_motorbike_form_sold_value(
         self, value: str | int | float
     ):
@@ -423,6 +453,12 @@ class MotorbikeState(rx.State):
                 self.edit_motorbike_form_name = bike["name"]
                 self.edit_motorbike_form_initial_cost = str(
                     bike["initial_cost"]
+                )
+                self.edit_motorbike_form_tanya_initial_cost = str(
+                    bike.get("tanya_initial_cost", 0.0)
+                )
+                self.edit_motorbike_form_gerald_initial_cost = str(
+                    bike.get("gerald_initial_cost", 0.0)
                 )
                 self.edit_motorbike_form_buyer = (
                     bike["bike_buyer"]
@@ -464,6 +500,8 @@ class MotorbikeState(rx.State):
         initial_cost_str = (
             self.edit_motorbike_form_initial_cost
         )
+        tanya_initial_str = self.edit_motorbike_form_tanya_initial_cost
+        gerald_initial_str = self.edit_motorbike_form_gerald_initial_cost
         buyer = self.edit_motorbike_form_buyer
         if not name:
             return rx.toast(
@@ -482,6 +520,8 @@ class MotorbikeState(rx.State):
                     "Initial cost cannot be negative.",
                     duration=3000,
                 )
+            tanya_initial = float(tanya_initial_str or 0)
+            gerald_initial = float(gerald_initial_str or 0)
         except ValueError:
             return rx.toast(
                 "Invalid initial cost format.",
@@ -520,6 +560,8 @@ class MotorbikeState(rx.State):
                 )
             bike_db.name = name
             bike_db.initial_cost = initial_cost
+            bike_db.tanya_initial_cost = tanya_initial
+            bike_db.gerald_initial_cost = gerald_initial
             bike_db.buyer = buyer
             bike_db.is_sold = is_sold_val
             bike_db.sold_value = sold_value_val
@@ -553,6 +595,8 @@ class MotorbikeState(rx.State):
         self.editing_motorbike_id = None
         self.edit_motorbike_form_name = ""
         self.edit_motorbike_form_initial_cost = ""
+        self.edit_motorbike_form_tanya_initial_cost = ""
+        self.edit_motorbike_form_gerald_initial_cost = ""
         self.edit_motorbike_form_buyer = self.buyers[0]
         self.edit_motorbike_form_is_sold = False
         self.edit_motorbike_form_sold_value = ""
@@ -790,6 +834,14 @@ class MotorbikeState(rx.State):
     @rx.event
     def set_new_motorbike_initial_cost(self, value: str):
         self.new_motorbike_initial_cost = value
+
+    @rx.event
+    def set_new_motorbike_tanya_initial_cost(self, value: str):
+        self.new_motorbike_tanya_initial_cost = value
+
+    @rx.event
+    def set_new_motorbike_gerald_initial_cost(self, value: str):
+        self.new_motorbike_gerald_initial_cost = value
 
     @rx.event
     def set_new_part_name(self, value: str):

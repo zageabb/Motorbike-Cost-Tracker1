@@ -49,6 +49,8 @@ class MotorbikeDB(rx.Model, table=True):
     )
     name: str
     initial_cost: float
+    tanya_initial_cost: float = Field(default=0.0)
+    gerald_initial_cost: float = Field(default=0.0)
     buyer: PyOptional[str] = Field(default=None)
     is_sold: bool = Field(default=False)
     sold_value: PyOptional[float] = Field(default=None)

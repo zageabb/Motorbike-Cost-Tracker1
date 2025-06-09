@@ -46,7 +46,10 @@ def populate_example_data():
             )
         else:
             bike1 = MotorbikeDB(
-                name="Honda CB750", initial_cost=2500.0
+                name="Honda CB750",
+                initial_cost=2500.0,
+                tanya_initial_cost=1250.0,
+                gerald_initial_cost=1250.0,
             )
             part1_1 = PartDB(
                 name="Carburetor Kit",
@@ -63,7 +66,10 @@ def populate_example_data():
                 motorbike=bike1,
             )
             bike2 = MotorbikeDB(
-                name="Yamaha XS650", initial_cost=1800.0
+                name="Yamaha XS650",
+                initial_cost=1800.0,
+                tanya_initial_cost=900.0,
+                gerald_initial_cost=900.0,
             )
             part2_1 = PartDB(
                 name="Brake Pads",
