@@ -80,151 +80,145 @@ def render_analytics_row(
 
 def analytics_page() -> rx.Component:
     content = rx.fragment(
-            rx.el.h2(
-                "Overall Summary",
-                class_name="text-2xl font-semibold text-gray-700 mb-4",
+        rx.el.h2(
+            "Overall Summary",
+            class_name="text-2xl font-semibold text-gray-700 mb-4",
+        ),
+        rx.el.div(
+            rx.el.label(
+                "Filter by Sold Status:",
+                class_name="mr-2 font-medium text-gray-700",
+            ),
+            rx.el.select(
+                rx.el.option("Show All Bikes", value="all"),
+                rx.el.option("Show Sold Bikes Only", value="sold"),
+                rx.el.option(
+                    "Show Unsold Bikes Only",
+                    value="unsold",
+                ),
+                value=AnalyticsState.filter_sold_status,
+                on_change=AnalyticsState.set_filter_sold_status,
+                class_name="mb-6 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+            ),
+            class_name="mb-6 flex items-center",
+        ),
+        rx.el.div(
+            rx.el.div(
+                rx.el.p(
+                    "Total Tanya's Investment:",
+                    class_name="text-sm font-medium text-gray-500",
+                ),
+                rx.el.p(
+                    f"${AnalyticsState.overall_summary['total_tanya_investment']:.2f}",
+                    class_name="mt-1 text-xl font-semibold text-blue-600",
+                ),
+                class_name="bg-white shadow rounded-lg p-4",
             ),
             rx.el.div(
-                rx.el.label(
-                    "Filter by Sold Status:",
-                    class_name="mr-2 font-medium text-gray-700",
+                rx.el.p(
+                    "Total Gerald's Investment:",
+                    class_name="text-sm font-medium text-gray-500",
                 ),
-                rx.el.select(
-                    rx.el.option(
-                        "Show All Bikes", value="all"
-                    ),
-                    rx.el.option(
-                        "Show Sold Bikes Only", value="sold"
-                    ),
-                    rx.el.option(
-                        "Show Unsold Bikes Only",
-                        value="unsold",
-                    ),
-                    value=AnalyticsState.filter_sold_status,
-                    on_change=AnalyticsState.set_filter_sold_status,
-                    class_name="mb-6 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+                rx.el.p(
+                    f"${AnalyticsState.overall_summary['total_gerald_investment']:.2f}",
+                    class_name="mt-1 text-xl font-semibold text-green-600",
                 ),
-                class_name="mb-6 flex items-center",
+                class_name="bg-white shadow rounded-lg p-4",
             ),
             rx.el.div(
-                rx.el.div(
-                    rx.el.p(
-                        "Total Tanya's Investment:",
-                        class_name="text-sm font-medium text-gray-500",
-                    ),
-                    rx.el.p(
-                        f"${AnalyticsState.overall_summary['total_tanya_investment']:.2f}",
-                        class_name="mt-1 text-xl font-semibold text-blue-600",
-                    ),
-                    class_name="bg-white shadow rounded-lg p-4",
+                rx.el.p(
+                    "Total Tanya's Profit Share:",
+                    class_name="text-sm font-medium text-gray-500",
                 ),
-                rx.el.div(
-                    rx.el.p(
-                        "Total Gerald's Investment:",
-                        class_name="text-sm font-medium text-gray-500",
-                    ),
-                    rx.el.p(
-                        f"${AnalyticsState.overall_summary['total_gerald_investment']:.2f}",
-                        class_name="mt-1 text-xl font-semibold text-green-600",
-                    ),
-                    class_name="bg-white shadow rounded-lg p-4",
+                rx.el.p(
+                    f"${AnalyticsState.overall_summary['total_tanya_profit_share']:.2f}",
+                    class_name="mt-1 text-xl font-semibold text-blue-600",
                 ),
-                rx.el.div(
-                    rx.el.p(
-                        "Total Tanya's Profit Share:",
-                        class_name="text-sm font-medium text-gray-500",
-                    ),
-                    rx.el.p(
-                        f"${AnalyticsState.overall_summary['total_tanya_profit_share']:.2f}",
-                        class_name="mt-1 text-xl font-semibold text-blue-600",
-                    ),
-                    class_name="bg-white shadow rounded-lg p-4",
-                ),
-                rx.el.div(
-                    rx.el.p(
-                        "Total Gerald's Profit Share:",
-                        class_name="text-sm font-medium text-gray-500",
-                    ),
-                    rx.el.p(
-                        f"${AnalyticsState.overall_summary['total_gerald_profit_share']:.2f}",
-                        class_name="mt-1 text-xl font-semibold text-green-600",
-                    ),
-                    class_name="bg-white shadow rounded-lg p-4",
-                ),
-                class_name="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8",
-            ),
-            rx.el.h2(
-                "Bike Breakdown",
-                class_name="text-2xl font-semibold text-gray-700 mb-4",
+                class_name="bg-white shadow rounded-lg p-4",
             ),
             rx.el.div(
-                rx.el.table(
-                    rx.el.thead(
+                rx.el.p(
+                    "Total Gerald's Profit Share:",
+                    class_name="text-sm font-medium text-gray-500",
+                ),
+                rx.el.p(
+                    f"${AnalyticsState.overall_summary['total_gerald_profit_share']:.2f}",
+                    class_name="mt-1 text-xl font-semibold text-green-600",
+                ),
+                class_name="bg-white shadow rounded-lg p-4",
+            ),
+            class_name="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8",
+        ),
+        rx.el.h2(
+            "Bike Breakdown",
+            class_name="text-2xl font-semibold text-gray-700 mb-4",
+        ),
+        rx.el.div(
+            rx.el.table(
+                rx.el.thead(
+                    rx.el.tr(
+                        rx.el.th(
+                            "Bike Name",
+                            class_name="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Initial Cost",
+                            class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Bike Buyer",
+                            class_name="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Total Cost (Bike + Parts)",
+                            class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Tanya's Inv. (Bike + Parts)",
+                            class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Gerald's Inv. (Bike + Parts)",
+                            class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Profit",
+                            class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Tanya's Share",
+                            class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Gerald's Share",
+                            class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                        rx.el.th(
+                            "Sold",
+                            class_name="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        ),
+                    )
+                ),
+                rx.el.tbody(
+                    rx.foreach(
+                        AnalyticsState.bike_analytics_data,
+                        render_analytics_row,
+                    ),
+                    rx.cond(
+                        AnalyticsState.bike_analytics_data.length() == 0,
                         rx.el.tr(
-                            rx.el.th(
-                                "Bike Name",
-                                class_name="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Initial Cost",
-                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Bike Buyer",
-                                class_name="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Total Cost (Bike + Parts)",
-                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Tanya's Inv. (Bike + Parts)",
-                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Gerald's Inv. (Bike + Parts)",
-                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Profit",
-                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Tanya's Share",
-                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Gerald's Share",
-                                class_name="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                            rx.el.th(
-                                "Sold",
-                                class_name="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider",
-                            ),
-                        )
-                    ),
-                    rx.el.tbody(
-                        rx.foreach(
-                            AnalyticsState.bike_analytics_data,
-                            render_analytics_row,
+                            rx.el.td(
+                                "No motorbike data available for the selected filter.",
+                                col_span=10,
+                                class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center",
+                            )
                         ),
-                        rx.cond(
-                            AnalyticsState.bike_analytics_data.length()
-                            == 0,
-                            rx.el.tr(
-                                rx.el.td(
-                                    "No motorbike data available for the selected filter.",
-                                    col_span=10,
-                                    class_name="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center",
-                                )
-                            ),
-                            rx.fragment(),
-                        ),
+                        rx.fragment(),
                     ),
-                    class_name="min-w-full divide-y divide-gray-200 shadow border-b border-gray-200 sm:rounded-lg",
                 ),
-                class_name="overflow-x-auto",
+                class_name="min-w-full divide-y divide-gray-200 shadow border-b border-gray-200 sm:rounded-lg",
             ),
+            class_name="overflow-x-auto",
         ),
         class_name="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8",
     )
