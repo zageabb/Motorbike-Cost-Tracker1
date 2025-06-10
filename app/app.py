@@ -2,9 +2,7 @@ import reflex as rx
 from app.pages.landing_page import landing_page
 from app.pages.dashboard_page import dashboard_page
 from app.pages.motorbikes_page import motorbikes_page
-from app.pages.motorbike_detail_page import (
-    motorbike_detail_page,
-)
+from app.pages.motorbike_detail_page import motorbike_detail_page
 from app.pages.sign_in import sign_in
 from app.pages.sign_up import sign_up
 from app.pages.analytics_page import analytics_page
@@ -25,7 +23,10 @@ app = app_with_theme()
 create_db_and_tables()
 populate_example_data()
 app.add_page(
-    landing_page, route="/", on_load=AuthState.check_session
+    motorbikes_page, route="/", on_load=AuthState.check_session
+)
+app.add_page(
+    landing_page, route="/landing", on_load=AuthState.check_session
 )
 app.add_page(
     dashboard_page,

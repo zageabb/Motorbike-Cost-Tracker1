@@ -1,11 +1,9 @@
 import reflex as rx
 from app.states.motorbike_state import MotorbikeState, Part
-from app.states.auth_state import AuthState
 from app.components.part_form import part_form
-from app.components.edit_motorbike_dialog import (
-    edit_motorbike_dialog,
-)
+from app.components.edit_motorbike_dialog import edit_motorbike_dialog
 from app.components.edit_part_dialog import edit_part_dialog
+from app.components.layout import page_layout
 
 
 def render_detail_part_row(
@@ -264,53 +262,21 @@ def motorbike_detail_content() -> rx.Component:
 
 
 def motorbike_detail_page() -> rx.Component:
-    return rx.el.div(
+    content = rx.fragment(
         edit_motorbike_dialog(),
         edit_part_dialog(),
-        rx.el.div(
-            rx.el.div(
-                rx.el.h1(
-                    "Motorbike Details",
-                    class_name="text-3xl font-bold text-gray-800 mb-6",
-                ),
-                rx.el.button(
-                    "Sign Out",
-                    on_click=AuthState.sign_out,
-                    class_name="absolute top-4 right-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
-                ),
-                class_name="relative",
-            ),
-            rx.el.div(
-                rx.link(
-                    "Back to Landing Page",
-                    href="/",
-                    class_name="text-blue-600 hover:text-blue-800 mr-4",
-                ),
-                rx.link(
-                    "Back to All Motorbikes",
-                    href="/motorbikes",
-                    class_name="text-indigo-600 hover:text-indigo-800 mr-4",
-                ),
-                rx.link(
-                    "Back to Dashboard",
-                    href="/dashboard",
-                    class_name="text-indigo-600 hover:text-indigo-800",
-                ),
-                class_name="mb-6",
-            ),
-            rx.cond(
-                MotorbikeState.selected_motorbike_for_detail
-                != None,
-                motorbike_detail_content(),
-                rx.el.p(
-                    "Loading motorbike details or motorbike not found...",
-                    class_name="text-gray-500",
-                ),
+        rx.cond(
+            MotorbikeState.selected_motorbike_for_detail != None,
+            motorbike_detail_content(),
+            rx.el.p(
+                "Loading motorbike details or motorbike not found...",
+                class_name="text-gray-500",
             ),
         ),
-        class_name="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen bg-gray-100 py-8 font-sans",
-        on_mount=[
-            MotorbikeState.load_all_data,
-            AuthState.check_session,
-        ],
+        class_name="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8",
+    )
+    return page_layout(
+        "Motorbike Details",
+        content,
+        on_mount=[MotorbikeState.load_all_data],
     )
