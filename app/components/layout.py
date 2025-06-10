@@ -18,7 +18,7 @@ def page_layout(page_title: str, content: rx.Component, **props) -> rx.Component
                 rx.image(
                     src="/favicon.ico",
                     alt="Company Logo",
-                    class_name="h-10 w-10",
+                    class_name="h-20 w-20",
                 ),
                 class_name="flex items-center ml-auto",
             ),
